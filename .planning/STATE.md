@@ -10,27 +10,27 @@ See: .planning/PROJECT.md (updated 2026-05-09)
 ## Current Position
 
 Phase: 1 of 5 (Foundation)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-05-09 — Plan 01-02 completed — .env.example documenté, config.py avec validation variables obligatoires
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-05-09 — Plan 01-03 completed — db/cache.py SQLite init, logging_setup.py, main.py entry point
 
-Progress: [██░░░░░░░░] 13%
+Progress: [███░░░░░░░] 20%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 2.5 minutes
-- Total execution time: 0.08 hours
+- Total plans completed: 3
+- Average duration: 3.3 minutes
+- Total execution time: 0.17 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| Phase 1 | 2 | 5 min | 2.5 min |
+| Phase 1 | 3 | 10 min | 3.3 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3 min), 01-02 (2 min)
+- Last 5 plans: 01-01 (3 min), 01-02 (2 min), 01-03 (5 min)
 - Trend: —
 
 *Updated after each plan completion*
@@ -50,6 +50,8 @@ Recent decisions affecting current work:
 - 01-01: SQLAlchemy non inclus en Phase 1 — sqlite3 standard library suffit pour le cache v1
 - 01-02: load_dotenv(override=False) — variables système prioritaires sur .env (sécurité VPS)
 - 01-02: _require() expose uniquement le NOM de la variable dans ValueError, pas sa valeur
+- 01-03: logging standard Python sur structlog pour limiter les dépendances en Phase 1
+- 01-03: log_run() dans main.py (pas db/cache.py) pour séparer infrastructure DB et logique métier
 
 ### Pending Todos
 
@@ -68,5 +70,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-05-09
-Stopped at: Completed 01-02-PLAN.md — .env.example documenté, config.py avec validation variables obligatoires, 6 tests TDD
+Stopped at: Completed 01-03-PLAN.md — db/cache.py SQLite init, logging_setup.py, main.py — Phase 1 Foundation COMPLETE
 Resume file: None

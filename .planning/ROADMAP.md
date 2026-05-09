@@ -12,7 +12,7 @@ Five phases build the system bottom-up: skeleton first, then data ingestion, the
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Project skeleton, .env config, SQLite cache, structured logging, and VPS-ready Python structure
+- [x] **Phase 1: Foundation** - Project skeleton, .env config, SQLite cache, structured logging, and VPS-ready Python structure
 - [ ] **Phase 2: Data Pipeline** - All data collectors (ETFs, crypto, PEA, macro, news/scraping) with rate limiting and PEA eligibility check
 - [ ] **Phase 3: Report Generation** - Daily, Weekly, and Monthly report builders with Claude LLM synthesis and HTML/text formatting
 - [ ] **Phase 4: Delivery & Side Outputs** - Gmail SMTP email dispatch, tweet file generation, and Markdown archiving
@@ -35,7 +35,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 - [x] 01-01-PLAN.md — Arborescence du projet, __init__.py des packages, requirements.txt, .gitignore
 - [x] 01-02-PLAN.md — .env.example documenté, config.py avec validation des variables obligatoires
-- [ ] 01-03-PLAN.md — db/cache.py (SQLite init + schema), logging_setup.py, main.py (entry point)
+- [x] 01-03-PLAN.md — db/cache.py (SQLite init + schema), logging_setup.py, main.py (entry point)
 
 ### Phase 2: Data Pipeline
 **Goal**: Every data source is collected reliably, rate limits are respected, historical data is cached in SQLite, and PEA eligibility changes trigger an alert flag
@@ -93,7 +93,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 2/3 | In progress | - |
+| 1. Foundation | 3/3 | Complete | 2026-05-09 |
 | 2. Data Pipeline | 0/TBD | Not started | - |
 | 3. Report Generation | 0/TBD | Not started | - |
 | 4. Delivery & Side Outputs | 0/TBD | Not started | - |
