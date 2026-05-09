@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-05-09)
 
 **Core value:** L'utilisateur reçoit chaque matin une analyse financière actionnable et sourcée couvrant ETFs, crypto et PEA — sans aucune action manuelle — directement dans sa boîte email.
-**Current focus:** Phase 1 — Foundation
+**Current focus:** Phase 2 — Data Pipeline
 
 ## Current Position
 

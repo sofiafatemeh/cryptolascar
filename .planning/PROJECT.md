@@ -12,7 +12,9 @@ L'utilisateur reçoit chaque matin une analyse financière actionnable et sourc�
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] Cache SQLite pour données historiques (éviter re-fetch inutile) — Validated in Phase 1: Foundation
+- [x] Logging structuré (timestamp, statut sources, erreurs par run) — Validated in Phase 1: Foundation
+- [x] Configuration 100% via .env (aucun credential hardcodé) — Validated in Phase 1: Foundation
 
 ### Active
 
@@ -29,10 +31,7 @@ L'utilisateur reçoit chaque matin une analyse financière actionnable et sourc�
 - [ ] Génération d'un fichier tweet quotidien /tweets/{YYYY-MM-DD}.txt (lun–sam + dimanche weekly)
 - [ ] Scheduler via APScheduler ou cron système (3 triggers: daily, sunday, end-of-month)
 - [ ] Archivage des rapports en Markdown dans /reports/daily/, /reports/weekly/, /reports/monthly/
-- [ ] Cache SQLite pour données historiques (éviter re-fetch inutile)
-- [ ] Logging structuré (timestamp, statut sources, erreurs par run)
 - [ ] Dégradation gracieuse si source indisponible (rapport partiel envoyé, gap noté)
-- [ ] Configuration 100% via .env (aucun credential hardcodé)
 
 ### Out of Scope
 
@@ -87,4 +86,4 @@ Ce document évolue à chaque transition de phase et à chaque milestone.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-09 after initialization*
+*Last updated: 2026-05-09 — Phase 1 complete: skeleton, config, SQLite, logging, main.py*
