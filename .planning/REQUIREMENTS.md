@@ -97,46 +97,46 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | — | Pending |
-| DATA-02 | — | Pending |
-| DATA-03 | — | Pending |
-| DATA-04 | — | Pending |
-| DATA-05 | — | Pending |
-| DATA-06 | — | Pending |
-| DATA-07 | — | Pending |
-| DATA-08 | — | Pending |
-| REPT-01 | — | Pending |
-| REPT-02 | — | Pending |
-| REPT-03 | — | Pending |
-| REPT-04 | — | Pending |
-| REPT-05 | — | Pending |
-| LLM-01 | — | Pending |
-| LLM-02 | — | Pending |
-| MAIL-01 | — | Pending |
-| MAIL-02 | — | Pending |
-| MAIL-03 | — | Pending |
-| MAIL-04 | — | Pending |
-| TWEET-01 | — | Pending |
-| TWEET-02 | — | Pending |
-| TWEET-03 | — | Pending |
-| TWEET-04 | — | Pending |
-| SCHED-01 | — | Pending |
-| SCHED-02 | — | Pending |
-| SCHED-03 | — | Pending |
-| STOR-01 | — | Pending |
-| STOR-02 | — | Pending |
-| STOR-03 | — | Pending |
-| STOR-04 | — | Pending |
-| INFRA-01 | — | Pending |
-| INFRA-02 | — | Pending |
-| INFRA-03 | — | Pending |
-| INFRA-04 | — | Pending |
+| DATA-01 | Phase 2 | Pending |
+| DATA-02 | Phase 2 | Pending |
+| DATA-03 | Phase 2 | Pending |
+| DATA-04 | Phase 2 | Pending |
+| DATA-05 | Phase 2 | Pending |
+| DATA-06 | Phase 2 | Pending |
+| DATA-07 | Phase 2 | Pending |
+| DATA-08 | Phase 2 | Pending |
+| REPT-01 | Phase 3 | Pending |
+| REPT-02 | Phase 3 | Pending |
+| REPT-03 | Phase 3 | Pending |
+| REPT-04 | Phase 3 | Pending |
+| REPT-05 | Phase 4 | Pending |
+| LLM-01 | Phase 3 | Pending |
+| LLM-02 | Phase 3 | Pending |
+| MAIL-01 | Phase 4 | Pending |
+| MAIL-02 | Phase 4 | Pending |
+| MAIL-03 | Phase 4 | Pending |
+| MAIL-04 | Phase 4 | Pending |
+| TWEET-01 | Phase 4 | Pending |
+| TWEET-02 | Phase 4 | Pending |
+| TWEET-03 | Phase 4 | Pending |
+| TWEET-04 | Phase 4 | Pending |
+| SCHED-01 | Phase 5 | Pending |
+| SCHED-02 | Phase 5 | Pending |
+| SCHED-03 | Phase 5 | Pending |
+| STOR-01 | Phase 4 | Pending |
+| STOR-02 | Phase 4 | Pending |
+| STOR-03 | Phase 1 | Pending |
+| STOR-04 | Phase 1 | Pending |
+| INFRA-01 | Phase 1 | Pending |
+| INFRA-02 | Phase 5 | Pending |
+| INFRA-03 | Phase 1 | Pending |
+| INFRA-04 | Phase 1 | Pending |
 
 **Coverage:**
 - v1 requirements: 34 total
-- Mapped to phases: 0 (à remplir par le roadmapper)
-- Unmapped: 34 ⚠️
+- Mapped to phases: 34
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-05-09*
-*Last updated: 2026-05-09 after initial definition*
+*Last updated: 2026-05-09 after roadmap creation — all 34 requirements mapped*
