@@ -76,7 +76,6 @@ def main() -> int:
         logger.info("Base de données SQLite initialisée : %s", config.db_path)
     except Exception as exc:
         logger.error("Échec initialisation SQLite : %s", exc, exc_info=True)
-        log_run(config.db_path, status="error", error_msg=str(exc))
         return 1
 
     # Étape 4 : Loguer le démarrage réussi

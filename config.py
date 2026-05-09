@@ -85,11 +85,11 @@ def get_config(env_file: str = ".env") -> Config:
     anthropic_api_key = _require("ANTHROPIC_API_KEY")
     anthropic_model = _optional("ANTHROPIC_MODEL", "claude-sonnet-4-6")
 
-    # APIs de données obligatoires
-    coingecko_api_key = _require("COINGECKO_API_KEY")
-    alpha_vantage_key = _require("ALPHA_VANTAGE_KEY")
-    fred_api_key = _require("FRED_API_KEY")
-    newsapi_key = _require("NEWSAPI_KEY")
+    # APIs de données optionnelles — absentes = collector désactivé (dégradation gracieuse)
+    coingecko_api_key = _optional("COINGECKO_API_KEY")
+    alpha_vantage_key = _optional("ALPHA_VANTAGE_KEY")
+    fred_api_key = _optional("FRED_API_KEY")
+    newsapi_key = _optional("NEWSAPI_KEY")
 
     # Storage
     db_path_str = _optional("DB_PATH", "cryptolascar.db")
