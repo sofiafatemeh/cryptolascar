@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 2 Plan 1 complete — collectors/etf.py implemented — 5 ETF tickers with cache + AV fallback
-last_updated: "2026-05-09T20:55:00.000Z"
-last_activity: 2026-05-09 — Phase 2 Plan 02-01 complete — collectors/etf.py TDD (RED+GREEN), 5/5 tests passent
+stopped_at: Phase 2 Plan 2 complete — collectors/crypto.py implemented — 8 coins CoinGecko batch + Fear & Greed Alternative.me
+last_updated: "2026-05-09T21:00:00.000Z"
+last_activity: 2026-05-09 — Phase 2 Plan 02-02 complete — collectors/crypto.py TDD (RED+GREEN), 5/5 tests passent
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 9
-  completed_plans: 4
-  percent: 25
+  completed_plans: 5
+  percent: 28
 ---
 
 # Project State
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-05-09)
 ## Current Position
 
 Phase: 2 of 5 (Data Pipeline)
-Plan: 1 of 6 in current phase
+Plan: 2 of 6 in current phase
 Status: Executing
-Last activity: 2026-05-09 — Plan 02-01 complete — collectors/etf.py avec yfinance + Alpha Vantage + cache SQLite 4h
+Last activity: 2026-05-09 — Plan 02-02 complete — collectors/crypto.py avec CoinGecko batch (8 coins) + Fear & Greed Alternative.me + cache SQLite 1h
 
 Progress: [███░░░░░░░] 25%
 
@@ -72,6 +72,8 @@ Recent decisions affecting current work:
 - 01-03: log_run() dans main.py (pas db/cache.py) pour séparer infrastructure DB et logique métier
 - 02-01: Test cache hit pré-remplit tous les tickers ETF pour assert_not_called() correct
 - 02-01: av_failed initialisé à True si alpha_vantage_key vide — pas d'appel AV inutile
+- 02-02: Batch unique CoinGecko pour 8 coins (1 requête) — minimise les appels et le risque de rate limit
+- 02-02: time.sleep(1.5s) conservé même après batch unique — conformité rate limit conservative
 
 ### Pending Todos
 
@@ -90,5 +92,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-05-09
-Stopped at: Completed 02-01-PLAN.md — collectors/etf.py TDD (RED+GREEN), 5/5 tests, 18/18 total tests
+Stopped at: Completed 02-02-PLAN.md — collectors/crypto.py TDD (RED+GREEN), 5/5 tests, 23/23 total tests
 Resume file: None
