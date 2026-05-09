@@ -74,13 +74,22 @@ def _insert_cache_row(db_path: Path, symbol: str, data: dict, expires_in_hours: 
 
 
 # ---------------------------------------------------------------------------
-# Test 1 — Cache hit : yfinance ne doit PAS être appelé
+# Test 1 — Cache hit : yfinance ne doit PAS être appelé pour le ticker en cache
 # ---------------------------------------------------------------------------
 
 def test_cache_hit_skips_yfinance(tmp_config):
-    """Un ticker en cache valide doit être retourné sans appel yfinance."""
+    """
+    Un ticker en cache valide doit être retourné sans appel yfinance POUR CE TICKER.
+    On met tous les tickers en cache afin de vérifier qu'aucun appel yfinance n'est émis.
+    """
     cached_data = {"price": 500.0, "prev_close": 495.0, "pct_change": 1.01, "volume": 1_000_000}
-    _insert_cache_row(tmp_config.db_path, "SPY", cached_data, expires_in_hours=5.0)
+    # Pré-remplir le cache pour TOUS les tickers ETF
+    from collectors.etf import ETF_TICKERS
+    for ticker in ETF_TICKERS:
+        ticker_data = dict(cached_data)
+        if ticker == "SPY":
+            ticker_data["price"] = 500.0
+        _insert_cache_row(tmp_config.db_path, ticker, ticker_data, expires_in_hours=5.0)
 
     with patch("collectors.etf.yf") as mock_yf:
         mock_yf.Ticker.side_effect = AssertionError("yfinance should not be called on cache hit")
