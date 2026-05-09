@@ -47,7 +47,15 @@ Plans:
   3. If an API is unavailable (mocked or real), the collector returns a partial result with the gap noted rather than raising an unhandled exception
   4. The PEA eligibility check runs and logs either "no change" or a detected status change against the AMF/Euronext reference
   5. API call sequences include the required sleep delays; no rate-limit ban is triggered during a full collection run
-**Plans**: TBD
+**Plans**: 6 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — collectors/etf.py — ETF price collection (SPY, QQQ, IWDA.AS, EIMI.AS, CSPX.AS) via yfinance + Alpha Vantage fallback, 4h cache
+- [ ] 02-02-PLAN.md — collectors/crypto.py — Crypto prices (8 coins) via CoinGecko + Fear & Greed via Alternative.me, 1h cache
+- [ ] 02-03-PLAN.md — collectors/pea.py — PEA France prices (^FCHI, ^SBF120, CW8.PA, PAEEM.PA, PANX.PA) + static eligibility check + change detection, 4h cache
+- [ ] 02-04-PLAN.md — collectors/macro.py — FRED API macro indicators (DGS10, DGS2, CPIAUCSL, M2SL), 24h cache
+- [ ] 02-05-PLAN.md — collectors/news.py — NewsAPI + BS4 scraping (CoinDesk, CoinTelegraph, Boursorama, AMF), 2h cache, max 35 headlines
+- [ ] 02-06-PLAN.md — Integration: collect_all() in main.py wires all 5 collectors, integration tests, run_log updated
 
 ### Phase 3: Report Generation
 **Goal**: All three report types (Daily, Weekly, Monthly) are generated as structured documents with Claude-synthesized narrative sections and correct section counts/word targets
@@ -94,7 +102,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-05-09 |
-| 2. Data Pipeline | 0/TBD | Not started | - |
+| 2. Data Pipeline | 0/6 | Planned | - |
 | 3. Report Generation | 0/TBD | Not started | - |
 | 4. Delivery & Side Outputs | 0/TBD | Not started | - |
 | 5. Scheduling & Resilience | 0/TBD | Not started | - |
