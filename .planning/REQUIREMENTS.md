@@ -7,14 +7,14 @@
 
 ### Data Collection
 
-- [ ] **DATA-01**: Le système collecte les données ETFs (prix, performance, fund flows) via Yahoo Finance et Alpha Vantage
+- [x] **DATA-01**: Le système collecte les données ETFs (prix, performance, fund flows) via Yahoo Finance et Alpha Vantage
 - [ ] **DATA-02**: Le système collecte les données crypto Tier 1+2 (prix, market cap, volume, Fear & Greed) via CoinGecko API
 - [ ] **DATA-03**: Le système collecte les données PEA France (CAC 40 / SBF 120 + ETFs PEA Amundi/Lyxor) via Yahoo Finance
 - [ ] **DATA-04**: Le système collecte les indicateurs macro (taux, inflation, M2) via FRED API
 - [ ] **DATA-05**: Le système collecte les headlines financières via NewsAPI / GNews
 - [ ] **DATA-06**: Le système scrape les headlines publiques de Reuters, Bloomberg, CoinDesk, CoinTelegraph, Boursorama, AMF
 - [ ] **DATA-07**: Le système vérifie l'éligibilité PEA via liste AMF + Euronext Paris et génère une alerte si changement de statut
-- [ ] **DATA-08**: Le système respecte les rate limits de toutes les APIs (sleep entre appels) pour éviter les bans
+- [x] **DATA-08**: Le système respecte les rate limits de toutes les APIs (sleep entre appels) pour éviter les bans
 
 ### Report Generation
 
@@ -97,14 +97,14 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | Phase 2 | Pending |
+| DATA-01 | Phase 2 | Complete (02-01) |
 | DATA-02 | Phase 2 | Pending |
 | DATA-03 | Phase 2 | Pending |
 | DATA-04 | Phase 2 | Pending |
 | DATA-05 | Phase 2 | Pending |
 | DATA-06 | Phase 2 | Pending |
 | DATA-07 | Phase 2 | Pending |
-| DATA-08 | Phase 2 | Pending |
+| DATA-08 | Phase 2 | Complete (02-01) |
 | REPT-01 | Phase 3 | Pending |
 | REPT-02 | Phase 3 | Pending |
 | REPT-03 | Phase 3 | Pending |

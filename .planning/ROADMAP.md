@@ -50,7 +50,7 @@ Plans:
 **Plans**: 6 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — collectors/etf.py — ETF price collection (SPY, QQQ, IWDA.AS, EIMI.AS, CSPX.AS) via yfinance + Alpha Vantage fallback, 4h cache
+- [x] 02-01-PLAN.md — collectors/etf.py — ETF price collection (SPY, QQQ, IWDA.AS, EIMI.AS, CSPX.AS) via yfinance + Alpha Vantage fallback, 4h cache
 - [ ] 02-02-PLAN.md — collectors/crypto.py — Crypto prices (8 coins) via CoinGecko + Fear & Greed via Alternative.me, 1h cache
 - [ ] 02-03-PLAN.md — collectors/pea.py — PEA France prices (^FCHI, ^SBF120, CW8.PA, PAEEM.PA, PANX.PA) + static eligibility check + change detection, 4h cache
 - [ ] 02-04-PLAN.md — collectors/macro.py — FRED API macro indicators (DGS10, DGS2, CPIAUCSL, M2SL), 24h cache
@@ -102,7 +102,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-05-09 |
-| 2. Data Pipeline | 0/6 | Planned | - |
+| 2. Data Pipeline | 1/6 | Executing | - |
 | 3. Report Generation | 0/TBD | Not started | - |
 | 4. Delivery & Side Outputs | 0/TBD | Not started | - |
 | 5. Scheduling & Resilience | 0/TBD | Not started | - |

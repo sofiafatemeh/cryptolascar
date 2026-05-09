@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: ready_to_execute
-stopped_at: Phase 2 planned — 6 plans in 2 waves — Ready to execute
-last_updated: "2026-05-09T22:00:00.000Z"
-last_activity: 2026-05-09 — Phase 2 Data Pipeline planned — 6 plans created (5 collectors + integration)
+status: executing
+stopped_at: Phase 2 Plan 1 complete — collectors/etf.py implemented — 5 ETF tickers with cache + AV fallback
+last_updated: "2026-05-09T20:55:00.000Z"
+last_activity: 2026-05-09 — Phase 2 Plan 02-01 complete — collectors/etf.py TDD (RED+GREEN), 5/5 tests passent
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 9
-  completed_plans: 3
-  percent: 20
+  completed_plans: 4
+  percent: 25
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-05-09)
 ## Current Position
 
 Phase: 2 of 5 (Data Pipeline)
-Plan: 0 of 6 in current phase
-Status: Ready to execute
-Last activity: 2026-05-09 — Phase 2 Data Pipeline planned — 6 plans created (5 collectors Wave 1 + integration Wave 2)
+Plan: 1 of 6 in current phase
+Status: Executing
+Last activity: 2026-05-09 — Plan 02-01 complete — collectors/etf.py avec yfinance + Alpha Vantage + cache SQLite 4h
 
-Progress: [███░░░░░░░] 20%
+Progress: [███░░░░░░░] 25%
 
 ## Performance Metrics
 
@@ -70,6 +70,8 @@ Recent decisions affecting current work:
 - 01-02: _require() expose uniquement le NOM de la variable dans ValueError, pas sa valeur
 - 01-03: logging standard Python sur structlog pour limiter les dépendances en Phase 1
 - 01-03: log_run() dans main.py (pas db/cache.py) pour séparer infrastructure DB et logique métier
+- 02-01: Test cache hit pré-remplit tous les tickers ETF pour assert_not_called() correct
+- 02-01: av_failed initialisé à True si alpha_vantage_key vide — pas d'appel AV inutile
 
 ### Pending Todos
 
@@ -88,5 +90,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-05-09
-Stopped at: Completed 01-03-PLAN.md — db/cache.py SQLite init, logging_setup.py, main.py — Phase 1 Foundation COMPLETE
+Stopped at: Completed 02-01-PLAN.md — collectors/etf.py TDD (RED+GREEN), 5/5 tests, 18/18 total tests
 Resume file: None
