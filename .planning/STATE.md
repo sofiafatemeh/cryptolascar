@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 2 Plan 2 complete — collectors/crypto.py implemented — 8 coins CoinGecko batch + Fear & Greed Alternative.me
-last_updated: "2026-05-09T21:00:00.000Z"
-last_activity: 2026-05-09 — Phase 2 Plan 02-02 complete — collectors/crypto.py TDD (RED+GREEN), 5/5 tests passent
+stopped_at: Phase 2 Plan 3 complete — collectors/pea.py implemented — yfinance PEA prices + éligibilité AMF statique + détection changement
+last_updated: "2026-05-09T21:02:25Z"
+last_activity: 2026-05-09 — Phase 2 Plan 02-03 complete — collectors/pea.py TDD (RED+GREEN), 6/6 tests passent, 29/29 total
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 9
-  completed_plans: 5
-  percent: 28
+  completed_plans: 6
+  percent: 33
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-05-09)
 ## Current Position
 
 Phase: 2 of 5 (Data Pipeline)
-Plan: 2 of 6 in current phase
+Plan: 3 of 6 in current phase
 Status: Executing
-Last activity: 2026-05-09 — Plan 02-02 complete — collectors/crypto.py avec CoinGecko batch (8 coins) + Fear & Greed Alternative.me + cache SQLite 1h
+Last activity: 2026-05-09 — Plan 02-03 complete — collectors/pea.py TDD (RED+GREEN), yfinance PEA + éligibilité AMF statique + détection changement, 6/6 tests passent
 
-Progress: [███░░░░░░░] 25%
+Progress: [████░░░░░░] 33%
 
 ## Performance Metrics
 
@@ -74,6 +74,9 @@ Recent decisions affecting current work:
 - 02-01: av_failed initialisé à True si alpha_vantage_key vide — pas d'appel AV inutile
 - 02-02: Batch unique CoinGecko pour 8 coins (1 requête) — minimise les appels et le risque de rate limit
 - 02-02: time.sleep(1.5s) conservé même après batch unique — conformité rate limit conservative
+- 02-03-A: Indices (^FCHI, ^SBF120) exclus du check d'éligibilité (PEA_ELIGIBILITY_STATUS=None) — les indices ne sont pas des titres investissables
+- 02-03-B: Éligibilité persistée sans TTL (expires_at=2099) — le statut AMF ne change pas selon un calendrier prévisible
+- 02-03-C: logger.warning() utilisé pour les changements d'éligibilité — niveau approprié pour une anomalie à surveiller sans bloquer le run
 
 ### Pending Todos
 
@@ -92,5 +95,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-05-09
-Stopped at: Completed 02-02-PLAN.md — collectors/crypto.py TDD (RED+GREEN), 5/5 tests, 23/23 total tests
+Stopped at: Completed 02-03-PLAN.md — collectors/pea.py TDD (RED+GREEN), 6/6 tests, 29/29 total tests
 Resume file: None
