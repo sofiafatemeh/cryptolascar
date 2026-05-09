@@ -1,0 +1,42 @@
+# Secrets — JAMAIS commiter
+.env
+
+# Base de données SQLite
+*.db
+*.sqlite
+*.sqlite3
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+.pytest_cache/
+
+# Environnements virtuels
+.venv/
+venv/
+env/
+ENV/
+
+# Rapports générés (optionnel selon config)
+# reports/  <- ne pas ignorer, on veut versionner les archives
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Distribution
+dist/
+build/
+*.egg-info/
