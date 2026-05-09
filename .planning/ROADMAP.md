@@ -30,7 +30,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. SQLite database file is created automatically on first run with the correct schema
   4. A log entry with timestamp and run status is written to the log file for every execution attempt
   5. No credentials or secrets appear anywhere in source code — only in .env
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [x] 01-01-PLAN.md — Arborescence du projet, __init__.py des packages, requirements.txt, .gitignore
+- [ ] 01-02-PLAN.md — .env.example documenté, config.py avec validation des variables obligatoires
+- [ ] 01-03-PLAN.md — db/cache.py (SQLite init + schema), logging_setup.py, main.py (entry point)
 
 ### Phase 2: Data Pipeline
 **Goal**: Every data source is collected reliably, rate limits are respected, historical data is cached in SQLite, and PEA eligibility changes trigger an alert flag
@@ -88,7 +93,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
+| 1. Foundation | 1/3 | In progress | - |
 | 2. Data Pipeline | 0/TBD | Not started | - |
 | 3. Report Generation | 0/TBD | Not started | - |
 | 4. Delivery & Side Outputs | 0/TBD | Not started | - |
