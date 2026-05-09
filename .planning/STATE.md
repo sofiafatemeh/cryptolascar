@@ -10,27 +10,27 @@ See: .planning/PROJECT.md (updated 2026-05-09)
 ## Current Position
 
 Phase: 1 of 5 (Foundation)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-05-09 — Plan 01-01 completed — arborescence, packages, requirements.txt, .gitignore
+Last activity: 2026-05-09 — Plan 01-02 completed — .env.example documenté, config.py avec validation variables obligatoires
 
-Progress: [█░░░░░░░░░] 7%
+Progress: [██░░░░░░░░] 13%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 3 minutes
-- Total execution time: 0.05 hours
+- Total plans completed: 2
+- Average duration: 2.5 minutes
+- Total execution time: 0.08 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| Phase 1 | 1 | 3 min | 3 min |
+| Phase 1 | 2 | 5 min | 2.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3 min)
+- Last 5 plans: 01-01 (3 min), 01-02 (2 min)
 - Trend: —
 
 *Updated after each plan completion*
@@ -48,6 +48,8 @@ Recent decisions affecting current work:
 - Init: SQLite for cache — no external DB infrastructure
 - Init: APScheduler or cron system — both viable, choose at Phase 5
 - 01-01: SQLAlchemy non inclus en Phase 1 — sqlite3 standard library suffit pour le cache v1
+- 01-02: load_dotenv(override=False) — variables système prioritaires sur .env (sécurité VPS)
+- 01-02: _require() expose uniquement le NOM de la variable dans ValueError, pas sa valeur
 
 ### Pending Todos
 
@@ -66,5 +68,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-05-09
-Stopped at: Completed 01-01-PLAN.md — arborescence, packages Python, requirements.txt, .gitignore
+Stopped at: Completed 01-02-PLAN.md — .env.example documenté, config.py avec validation variables obligatoires, 6 tests TDD
 Resume file: None

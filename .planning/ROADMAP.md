@@ -34,7 +34,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 - [x] 01-01-PLAN.md — Arborescence du projet, __init__.py des packages, requirements.txt, .gitignore
-- [ ] 01-02-PLAN.md — .env.example documenté, config.py avec validation des variables obligatoires
+- [x] 01-02-PLAN.md — .env.example documenté, config.py avec validation des variables obligatoires
 - [ ] 01-03-PLAN.md — db/cache.py (SQLite init + schema), logging_setup.py, main.py (entry point)
 
 ### Phase 2: Data Pipeline
@@ -93,7 +93,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 1/3 | In progress | - |
+| 1. Foundation | 2/3 | In progress | - |
 | 2. Data Pipeline | 0/TBD | Not started | - |
 | 3. Report Generation | 0/TBD | Not started | - |
 | 4. Delivery & Side Outputs | 0/TBD | Not started | - |
