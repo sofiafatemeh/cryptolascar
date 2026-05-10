@@ -101,7 +101,7 @@ def log_run(
     error_msg: str = "",
 ) -> None:
     """Enregistre un run dans la table run_log."""
-    run_at = datetime.datetime.utcnow().isoformat() + "Z"
+    run_at = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     conn = get_connection(db_path)
     try:
         conn.execute(
@@ -149,7 +149,7 @@ def main() -> int:
         return 1
 
     # Étape 4 : Loguer le démarrage
-    run_at = datetime.datetime.utcnow().isoformat() + "Z"
+    run_at = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     logger.info("Run démarré à %s", run_at)
 
     # Étape 5 : Collecte de toutes les données (Phase 2)
