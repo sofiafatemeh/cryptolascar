@@ -102,7 +102,11 @@ Plans:
   2. A full end-to-end run (triggered manually or via cron) completes without unhandled exceptions and delivers the email to the recipient inbox
   3. When one data source is deliberately taken offline (e.g., invalid API key), the run completes, a partial report is sent, and the log entry notes the failed source with the gap
   4. The system recovers automatically the next scheduled run without manual intervention after a transient failure
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — scheduler/utils.py + main.py --mode pipeline wiring + outer try/except + tests (SCHED-01, SCHED-02, SCHED-03, INFRA-02)
+- [ ] 05-02-PLAN.md — scheduler/install_cron.sh + crontab installation + end-to-end smoke test (SCHED-01, SCHED-02, SCHED-03)
 
 ## Progress
 
@@ -115,4 +119,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Data Pipeline | 6/6 | Complete | 2026-05-10 |
 | 3. Report Generation | 4/4 | Complete | 2026-05-10 |
 | 4. Delivery & Side Outputs | 2/2 | Complete | 2026-05-10 |
-| 5. Scheduling & Resilience | 0/TBD | Not started | - |
+| 5. Scheduling & Resilience | 0/2 | Not started | - |
