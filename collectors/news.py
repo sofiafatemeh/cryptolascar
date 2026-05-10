@@ -103,7 +103,9 @@ def _fetch_newsapi(api_key: str) -> list[dict]:
         "apiKey": api_key,
     }
     resp = httpx.get(NEWSAPI_URL, params=params, timeout=10)
-    resp.raise_for_status()
+    if resp.status_code != 200:
+        # Log status code only — never the URL which contains apiKey (T-02-17)
+        raise ValueError(f"NewsAPI returned HTTP {resp.status_code}")
     articles = resp.json().get("articles", [])
     return [
         {
