@@ -309,12 +309,14 @@ def collect_news(config: Config) -> dict:
         if cached is not None:
             logger.debug("Cache hit for news headlines (%d items)", len(cached))
             conn.close()
+            # newsapi_failed / scrape_failed are not stored in cache — they reflect
+            # live collection state only, not the cached run's degradation flags.
             return {
                 "headlines": cached,
                 "count": len(cached),
                 "newsapi_failed": False,
                 "scrape_failed": False,
-                "partial": False,
+                "partial": len(cached) == 0,
                 "source_used": CACHE_SOURCE,
             }
     except Exception as exc:
