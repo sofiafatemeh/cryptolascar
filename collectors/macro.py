@@ -141,42 +141,43 @@ def collect_macro(config: Config) -> dict:
     partial = False
     first_api_call = True  # Contrôle du sleep avant le premier appel
 
-    for series_id in FRED_SERIES:
-        # Vérification du cache avant tout appel FRED
-        cached = _get_cached(conn, CACHE_SOURCE, series_id)
-        if cached:
-            logger.debug("Cache hit FRED série %s", series_id)
-            series_data[series_id] = cached
-            continue
+    try:
+        for series_id in FRED_SERIES:
+            # Vérification du cache avant tout appel FRED
+            cached = _get_cached(conn, CACHE_SOURCE, series_id)
+            if cached:
+                logger.debug("Cache hit FRED série %s", series_id)
+                series_data[series_id] = cached
+                continue
 
-        # Cache miss — appel FRED avec sleep de rate-limiting (T-02-15)
-        try:
-            if not first_api_call:
-                time.sleep(FRED_SLEEP_SECONDS)
-            first_api_call = False
+            # Cache miss — appel FRED avec sleep de rate-limiting (T-02-15)
+            try:
+                if not first_api_call:
+                    time.sleep(FRED_SLEEP_SECONDS)
+                first_api_call = False
 
-            data = _fetch_fred_series(series_id, config.fred_api_key)
-            _upsert_cache(conn, CACHE_SOURCE, series_id, data)
-            logger.info(
-                "FRED %s récupéré : value=%.4f (date=%s)",
-                series_id,
-                data["value"],
-                data["date"],
-            )
-            series_data[series_id] = data
+                data = _fetch_fred_series(series_id, config.fred_api_key)
+                _upsert_cache(conn, CACHE_SOURCE, series_id, data)
+                logger.info(
+                    "FRED %s récupéré : value=%.4f (date=%s)",
+                    series_id,
+                    data["value"],
+                    data["date"],
+                )
+                series_data[series_id] = data
 
-        except Exception as e:
-            # Log uniquement le series_id et le message d'erreur — jamais l'api_key (T-02-13)
-            logger.error("Échec FRED pour %s : %s", series_id, e)
-            series_data[series_id] = {
-                "value": None,
-                "date": None,
-                "series_id": series_id,
-                "error": str(e),
-            }
-            partial = True
-
-    conn.close()
+            except Exception as e:
+                # Log uniquement le series_id et le message d'erreur — jamais l'api_key (T-02-13)
+                logger.error("Échec FRED pour %s : %s", series_id, e)
+                series_data[series_id] = {
+                    "value": None,
+                    "date": None,
+                    "series_id": series_id,
+                    "error": str(e),
+                }
+                partial = True
+    finally:
+        conn.close()
     return {
         "series": series_data,
         "fred_failed": fred_failed,
