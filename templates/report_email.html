@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ subject }}</title>
+</head>
+<body style="margin:0;padding:0;background-color:#ffffff;font-family:Georgia,serif;color:#222222;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:680px;margin:0 auto;">
+    <tr>
+      <td style="padding:32px 24px;">
+        {{ body_html | safe }}
+        <hr style="border:none;border-top:1px solid #dddddd;margin:32px 0;">
+        <p style="font-size:11px;color:#888888;font-style:italic;">
+          Ceci n'est pas un conseil financier. Informations à titre éducatif uniquement.
+        </p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
