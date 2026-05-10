@@ -198,7 +198,7 @@ def test_scraping_failure_sets_flag(tmp_config):
     def mock_httpx_get(url, **kwargs):
         if "newsapi.org" in url:
             mock_resp = MagicMock()
-            mock_resp.raise_for_status = lambda: None
+            mock_resp.status_code = 200
             mock_resp.json = lambda: MOCK_NEWSAPI_RESPONSE
             return mock_resp
         # Toutes les URL de scraping échouent
