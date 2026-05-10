@@ -24,6 +24,14 @@ from logging_setup import get_logger
 
 logger = get_logger(__name__)
 
+# Répertoire racine du projet (ancré au fichier, indépendant du cwd) (WR-03)
+_PROJECT_ROOT = Path(__file__).parent.parent
+_TWEETS_DIR = _PROJECT_ROOT / "tweets"
+
+# Validation des paramètres d'entrée pour prévenir le path traversal (CR-02)
+_SAFE_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+_SAFE_TYPE_RE = re.compile(r"^(daily|weekly|monthly)$")
+
 # Pool de hashtags — Claude choisit 3-4 selon le contenu (D-10)
 HASHTAG_POOL: list[str] = [
     "#Bourse",
@@ -95,6 +103,9 @@ def write_tweet(
     Returns:
         None — écrit le fichier ou lève une exception.
 
+    Raises:
+        ValueError: si report_type ou date ne respectent pas le format attendu (CR-02)
+
     Note:
         Monthly Close → retourne None sans écriture (TWEET-04).
         Longueur hors [240, 270] → warning loggé mais fichier écrit quand même.
@@ -103,6 +114,12 @@ def write_tweet(
     if report_type == "monthly":
         logger.info("Tweet skipped: report_type=monthly (TWEET-04)")
         return None
+
+    # Validation des paramètres pour prévenir le path traversal (CR-02)
+    if not _SAFE_TYPE_RE.match(report_type):
+        raise ValueError(f"Invalid report_type: {report_type!r}")
+    if not _SAFE_DATE_RE.match(date):
+        raise ValueError(f"Invalid date format: {date!r}")
 
     # Extraction du texte source selon le type de rapport
     if report_type == "daily":
@@ -126,7 +143,17 @@ def write_tweet(
             messages=[{"role": "user", "content": prompt}],
             system=_SYSTEM_PROMPT,
         )
-        tweet_text = response.content[0].text.strip()
+        # Vérification défensive de la réponse Claude (WR-02)
+        if not response.content:
+            raise ValueError(
+                f"Claude returned empty content list (stop_reason={response.stop_reason!r})"
+            )
+        content_block = response.content[0]
+        if content_block.type != "text":
+            raise ValueError(
+                f"Unexpected content block type: {content_block.type!r}"
+            )
+        tweet_text = content_block.text.strip()
     except Exception as e:
         # T-04-05 : api_key JAMAIS loggé
         logger.error(
@@ -143,8 +170,8 @@ def write_tweet(
             tweet_len, TWEET_MIN_CHARS, TWEET_MAX_CHARS, report_type, date,
         )
 
-    # Écriture dans /tweets/YYYY-MM-DD.txt (STOR-02)
-    dest = Path("tweets") / f"{date}.txt"
+    # Écriture dans /tweets/YYYY-MM-DD.txt (STOR-02) — chemin ancré au projet (WR-03)
+    dest = _TWEETS_DIR / f"{date}.txt"
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text(tweet_text, encoding="utf-8")
     logger.info(
