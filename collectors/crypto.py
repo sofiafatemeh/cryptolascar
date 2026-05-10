@@ -140,53 +140,54 @@ def collect_crypto(config: Config) -> dict:
     cg_failed = False
     fg_failed = False
 
-    # Vérifier si tous les coins sont en cache
-    cached_all = _all_coins_cached(conn)
-    if cached_all:
-        logger.debug("Cache hit pour tous les %d coins crypto", len(CRYPTO_IDS))
-        coins_data = cached_all
-    else:
-        try:
-            params: dict[str, Any] = {
-                "vs_currency": "usd",
-                "ids": ",".join(CRYPTO_IDS),
-                "order": "market_cap_desc",
-                "per_page": 250,
-                "page": 1,
-                "sparkline": "false",
-            }
-            if config.coingecko_api_key:
-                params["x_cg_demo_api_key"] = config.coingecko_api_key
-            resp = httpx.get(CG_MARKETS_URL, params=params, timeout=15)
-            items = resp.json()
-            time.sleep(CG_SLEEP_SECONDS)
-            for item in items:
-                coin_id = item["id"]
-                data = {
-                    "price": item["current_price"],
-                    "market_cap": item["market_cap"],
-                    "volume_24h": item["total_volume"],
-                    "pct_change_24h": item["price_change_percentage_24h"],
-                    "symbol": item["symbol"].upper(),
+    try:
+        # Vérifier si tous les coins sont en cache
+        cached_all = _all_coins_cached(conn)
+        if cached_all:
+            logger.debug("Cache hit pour tous les %d coins crypto", len(CRYPTO_IDS))
+            coins_data = cached_all
+        else:
+            try:
+                params: dict[str, Any] = {
+                    "vs_currency": "usd",
+                    "ids": ",".join(CRYPTO_IDS),
+                    "order": "market_cap_desc",
+                    "per_page": 250,
+                    "page": 1,
+                    "sparkline": "false",
                 }
-                _upsert_cache(conn, CACHE_SOURCE, coin_id, data)
-                coins_data[coin_id] = data
-                logger.info(
-                    "Fetched %s: price=%.2f, 24h=%.2f%%",
-                    coin_id,
-                    data["price"],
-                    data["pct_change_24h"] or 0,
-                )
-        except Exception as exc:
-            logger.error("CoinGecko fetch failed: %s", exc)
-            cg_failed = True
+                if config.coingecko_api_key:
+                    params["x_cg_demo_api_key"] = config.coingecko_api_key
+                resp = httpx.get(CG_MARKETS_URL, params=params, timeout=15)
+                items = resp.json()
+                time.sleep(CG_SLEEP_SECONDS)
+                for item in items:
+                    coin_id = item["id"]
+                    data = {
+                        "price": item["current_price"],
+                        "market_cap": item["market_cap"],
+                        "volume_24h": item["total_volume"],
+                        "pct_change_24h": item["price_change_percentage_24h"],
+                        "symbol": item["symbol"].upper(),
+                    }
+                    _upsert_cache(conn, CACHE_SOURCE, coin_id, data)
+                    coins_data[coin_id] = data
+                    logger.info(
+                        "Fetched %s: price=%.2f, 24h=%.2f%%",
+                        coin_id,
+                        data["price"],
+                        data["pct_change_24h"] or 0,
+                    )
+            except Exception as exc:
+                logger.error("CoinGecko fetch failed: %s", exc)
+                cg_failed = True
 
-    # Fear & Greed (indépendant de CoinGecko)
-    fg_data = _fetch_fear_greed(conn)
-    if fg_data is None:
-        fg_failed = True
-
-    conn.close()
+        # Fear & Greed (indépendant de CoinGecko)
+        fg_data = _fetch_fear_greed(conn)
+        if fg_data is None:
+            fg_failed = True
+    finally:
+        conn.close()
     return {
         "coins": coins_data,
         "fear_greed": fg_data,
