@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Phase 2 Plan 4 complete — collectors/macro.py implemented — FRED API DGS10/DGS2/CPIAUCSL/M2SL + cache 24h + rate limit 1s
-last_updated: "2026-05-09T21:06:25Z"
-last_activity: 2026-05-09 — Phase 2 Plan 02-04 complete — collectors/macro.py TDD (RED+GREEN), 5/5 tests passent, 34/34 total
+status: phase_complete
+stopped_at: Phase 2 complete — 6/6 plans, collectors/news.py + collect_all() orchestration, 42/42 tests
+last_updated: "2026-05-10T00:00:00Z"
+last_activity: 2026-05-10 — Phase 2 complete — 02-05 news collector (TDD) + 02-06 collect_all() + integration tests, 42/42 tests passent
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 9
-  completed_plans: 7
-  percent: 39
+  completed_plans: 9
+  percent: 60
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-09)
 
 **Core value:** L'utilisateur reçoit chaque matin une analyse financière actionnable et sourcée couvrant ETFs, crypto et PEA — sans aucune action manuelle — directement dans sa boîte email.
-**Current focus:** Phase 2 — Data Pipeline
+**Current focus:** Phase 3 — Report Generation (next)
 
 ## Current Position
 
-Phase: 2 of 5 (Data Pipeline)
-Plan: 4 of 6 in current phase
-Status: Executing
-Last activity: 2026-05-09 — Plan 02-04 complete — collectors/macro.py TDD (RED+GREEN), FRED API DGS10/DGS2/CPIAUCSL/M2SL + cache 24h, 5/5 tests passent
+Phase: 2 of 5 (Data Pipeline) — COMPLETE
+Plan: 6/6 complete
+Status: Phase complete — advancing to Phase 3
+Last activity: 2026-05-10 — Phase 2 complete — 02-05 news collector + 02-06 collect_all() orchestration, 42/42 tests
 
-Progress: [████░░░░░░] 39%
+Progress: [██████░░░░] 60%
 
 ## Performance Metrics
 

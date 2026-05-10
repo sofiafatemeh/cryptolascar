@@ -13,7 +13,7 @@ Five phases build the system bottom-up: skeleton first, then data ingestion, the
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Project skeleton, .env config, SQLite cache, structured logging, and VPS-ready Python structure
-- [ ] **Phase 2: Data Pipeline** - All data collectors (ETFs, crypto, PEA, macro, news/scraping) with rate limiting and PEA eligibility check
+- [x] **Phase 2: Data Pipeline** - All data collectors (ETFs, crypto, PEA, macro, news/scraping) with rate limiting and PEA eligibility check
 - [ ] **Phase 3: Report Generation** - Daily, Weekly, and Monthly report builders with Claude LLM synthesis and HTML/text formatting
 - [ ] **Phase 4: Delivery & Side Outputs** - Gmail SMTP email dispatch, tweet file generation, and Markdown archiving
 - [ ] **Phase 5: Scheduling & Resilience** - Cron/APScheduler triggers for all 3 report types, graceful degradation end-to-end, and full pipeline smoke test
@@ -54,8 +54,8 @@ Plans:
 - [x] 02-02-PLAN.md — collectors/crypto.py — Crypto prices (8 coins) via CoinGecko + Fear & Greed via Alternative.me, 1h cache
 - [x] 02-03-PLAN.md — collectors/pea.py — PEA France prices (^FCHI, ^SBF120, CW8.PA, PAEEM.PA, PANX.PA) + static eligibility check + change detection, 4h cache
 - [x] 02-04-PLAN.md — collectors/macro.py — FRED API macro indicators (DGS10, DGS2, CPIAUCSL, M2SL), 24h cache
-- [ ] 02-05-PLAN.md — collectors/news.py — NewsAPI + BS4 scraping (CoinDesk, CoinTelegraph, Boursorama, AMF), 2h cache, max 35 headlines
-- [ ] 02-06-PLAN.md — Integration: collect_all() in main.py wires all 5 collectors, integration tests, run_log updated
+- [x] 02-05-PLAN.md — collectors/news.py — NewsAPI + BS4 scraping (CoinDesk, CoinTelegraph, Boursorama, AMF), 2h cache, max 35 headlines
+- [x] 02-06-PLAN.md — Integration: collect_all() in main.py wires all 5 collectors, integration tests, run_log updated
 
 ### Phase 3: Report Generation
 **Goal**: All three report types (Daily, Weekly, Monthly) are generated as structured documents with Claude-synthesized narrative sections and correct section counts/word targets
@@ -102,7 +102,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-05-09 |
-| 2. Data Pipeline | 4/6 | Executing | - |
+| 2. Data Pipeline | 6/6 | Complete | 2026-05-10 |
 | 3. Report Generation | 0/TBD | Not started | - |
 | 4. Delivery & Side Outputs | 0/TBD | Not started | - |
 | 5. Scheduling & Resilience | 0/TBD | Not started | - |
