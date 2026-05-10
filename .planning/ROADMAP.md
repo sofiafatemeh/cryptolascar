@@ -14,8 +14,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Project skeleton, .env config, SQLite cache, structured logging, and VPS-ready Python structure
 - [x] **Phase 2: Data Pipeline** - All data collectors (ETFs, crypto, PEA, macro, news/scraping) with rate limiting and PEA eligibility check
-- [ ] **Phase 3: Report Generation** - Daily, Weekly, and Monthly report builders with Claude LLM synthesis and HTML/text formatting
-- [ ] **Phase 4: Delivery & Side Outputs** - Gmail SMTP email dispatch, tweet file generation, and Markdown archiving
+- [x] **Phase 3: Report Generation** - Daily, Weekly, and Monthly report builders with Claude LLM synthesis and HTML/text formatting
+- [x] **Phase 4: Delivery & Side Outputs** - Gmail SMTP email dispatch, tweet file generation, and Markdown archiving
 - [ ] **Phase 5: Scheduling & Resilience** - Cron/APScheduler triggers for all 3 report types, graceful degradation end-to-end, and full pipeline smoke test
 
 ## Phase Details
@@ -70,10 +70,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — reporters/base.py (shared Claude client + format helpers, LLM-01/LLM-02)
-- [ ] 03-02-PLAN.md — reporters/daily.py (Daily Report ~300w, 6 sections, REPT-01)
-- [ ] 03-03-PLAN.md — reporters/weekly.py (Weekly Wrap ~800w, 7 sections + tables, REPT-02)
-- [ ] 03-04-PLAN.md — reporters/monthly.py + reporters/dispatch.py (Monthly Close ~2000w + REPT-04 last-Sunday dispatcher)
+- [x] 03-01-PLAN.md — reporters/base.py (shared Claude client + format helpers, LLM-01/LLM-02)
+- [x] 03-02-PLAN.md — reporters/daily.py (Daily Report ~300w, 6 sections, REPT-01)
+- [x] 03-03-PLAN.md — reporters/weekly.py (Weekly Wrap ~800w, 7 sections + tables, REPT-02)
+- [x] 03-04-PLAN.md — reporters/monthly.py + reporters/dispatch.py (Monthly Close ~2000w + REPT-04 last-Sunday dispatcher)
 
 ### Phase 4: Delivery & Side Outputs
 **Goal**: Reports are sent as formatted HTML emails via Gmail SMTP and tweet files are written to /tweets/; every report is also archived as Markdown
@@ -90,8 +90,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — delivery/email.py + templates/report_email.html + Markdown archiving (REPT-05, MAIL-01 through MAIL-04, STOR-01)
-- [ ] 04-02-PLAN.md — delivery/tweet.py — tweet file generator via Claude API (TWEET-01 through TWEET-04, STOR-02)
+- [x] 04-01-PLAN.md — delivery/email.py + templates/report_email.html + Markdown archiving (REPT-05, MAIL-01 through MAIL-04, STOR-01)
+- [x] 04-02-PLAN.md — delivery/tweet.py — tweet file generator via Claude API (TWEET-01 through TWEET-04, STOR-02)
 
 ### Phase 5: Scheduling & Resilience
 **Goal**: The full pipeline runs autonomously on schedule (3 cron triggers), degrades gracefully when any source fails, and a successful end-to-end smoke test confirms the system is production-ready
@@ -113,6 +113,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-05-09 |
 | 2. Data Pipeline | 6/6 | Complete | 2026-05-10 |
-| 3. Report Generation | 0/4 | Not started | - |
-| 4. Delivery & Side Outputs | 0/2 | Not started | - |
+| 3. Report Generation | 4/4 | Complete | 2026-05-10 |
+| 4. Delivery & Side Outputs | 2/2 | Complete | 2026-05-10 |
 | 5. Scheduling & Resilience | 0/TBD | Not started | - |
