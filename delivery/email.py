@@ -8,23 +8,34 @@ Threat model:
 """
 from __future__ import annotations
 
-import email.charset
-import quopri
+import html as html_stdlib
 import re
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from pathlib import Path
 
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from config import Config
 from logging_setup import get_logger
 
 logger = get_logger(__name__)
 
-# Répertoire racine des templates (relatif à ce fichier)
-_TEMPLATES_DIR = Path(__file__).parent.parent / "templates"
+# Répertoire racine du projet et des templates (relatif à ce fichier)
+_PROJECT_ROOT = Path(__file__).parent.parent
+_TEMPLATES_DIR = _PROJECT_ROOT / "templates"
+_REPORTS_DIR = _PROJECT_ROOT / "reports"
+
+# Validation des paramètres d'entrée (CR-02)
+_SAFE_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+_SAFE_TYPE_RE = re.compile(r"^(daily|weekly|monthly)$")
+
+# Environnement Jinja2 module-level avec autoescape activé (CR-01, WR-01)
+_JINJA_ENV = Environment(
+    loader=FileSystemLoader(str(_TEMPLATES_DIR)),
+    autoescape=select_autoescape(["html"]),
+)
 
 # Patterns de sujet par type de rapport (D-05)
 _SUBJECTS = {
@@ -60,22 +71,25 @@ def _markdown_to_html(text: str) -> str:
 
     Transforme ## Titre -> <h2>Titre</h2> et les paragraphes en <p>.
     Pas de bibliothèque externe — inline uniquement (D-02).
+    Le contenu des titres et lignes normales est HTML-échappé (CR-01).
     """
     lines = text.split("\n")
     html_lines = []
     for line in lines:
         if line.startswith("## "):
+            safe_content = html_stdlib.escape(line[3:])
             html_lines.append(
-                f"<h2 style=\"color:#1a1a2e;font-size:18px;margin-top:24px;\">{line[3:]}</h2>"
+                f'<h2 style="color:#1a1a2e;font-size:18px;margin-top:24px;">{safe_content}</h2>'
             )
         elif line.startswith("# "):
+            safe_content = html_stdlib.escape(line[2:])
             html_lines.append(
-                f"<h1 style=\"color:#1a1a2e;font-size:22px;\">{line[2:]}</h1>"
+                f'<h1 style="color:#1a1a2e;font-size:22px;">{safe_content}</h1>'
             )
         elif line.strip() == "":
             html_lines.append("")
         else:
-            html_lines.append(line)
+            html_lines.append(html_stdlib.escape(line))
     # Joindre, puis entourer les blocs de texte en <p>
     raw = "\n".join(html_lines)
     # Remplacer les doubles sauts de ligne entre texte par </p><p>
@@ -92,9 +106,16 @@ def archive_report(report_type: str, date: str, content: str) -> None:
         content: texte brut du rapport (sortie reporters)
 
     Raises:
+        ValueError: si report_type ou date ne respectent pas le format attendu (CR-02)
         OSError: si l'écriture échoue (re-raise après log)
     """
-    dest = Path("reports") / report_type / f"{date}.md"
+    # Validation des paramètres pour prévenir le path traversal (CR-02)
+    if not _SAFE_TYPE_RE.match(report_type):
+        raise ValueError(f"Invalid report_type: {report_type!r}")
+    if not _SAFE_DATE_RE.match(date):
+        raise ValueError(f"Invalid date format: {date!r}")
+
+    dest = _REPORTS_DIR / report_type / f"{date}.md"
     try:
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_text(content, encoding="utf-8")
@@ -130,17 +151,16 @@ def send_email(
     """
     subject = build_subject(report_type, date, month=month, year=year)
 
-    # Conversion Markdown -> HTML pour le corps du template
+    # Conversion Markdown -> HTML pour le corps du template (contenu HTML-échappé)
     body_html = _markdown_to_html(plain_text)
 
-    # Rendu Jinja2 (D-01, D-02, D-06)
-    env = Environment(loader=FileSystemLoader(str(_TEMPLATES_DIR)), autoescape=False)
-    template = env.get_template("report_email.html")
+    # Rendu Jinja2 avec autoescape activé (CR-01, WR-01)
+    # body_html est pré-construit et de confiance → | safe dans le template
+    # subject est auto-échappé par autoescape=True
+    template = _JINJA_ENV.get_template("report_email.html")
     html_content = template.render(subject=subject, body_html=body_html)
 
     # Construction du message MIME multipart/alternative (REPT-05, D-03)
-    # Forcer quoted-printable sur la partie HTML pour que msg.as_string() reste lisible.
-    # La partie text/plain utilise utf-8 standard (les tests cherchent le texte brut).
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
     msg["From"] = config.smtp_user
@@ -148,17 +168,10 @@ def send_email(
 
     plain_part = MIMEText(plain_text, "plain", "utf-8")
 
-    # Partie HTML : forcer quoted-printable pour que les accents restent lisibles
-    # dans msg.as_string() sans encodage base64 opaque.
-    html_encoded = quopri.encodestring(html_content.encode("utf-8")).decode("ascii")
-    html_part = MIMEText("", "html")
-    html_part.set_payload(html_encoded)
-    html_part["Content-Transfer-Encoding"] = "quoted-printable"
-    html_part.set_charset("utf-8")
-    # Remplacer le Content-Type généré automatiquement par set_charset()
-    if "Content-Type" in html_part:
-        del html_part["Content-Type"]
-    html_part["Content-Type"] = 'text/html; charset="utf-8"'
+    # Partie HTML : MIMEText gère l'encodage automatiquement (CR-03)
+    # Évite le double Content-Transfer-Encoding causé par set_charset() après
+    # une assignation manuelle du header (violation RFC 2045).
+    html_part = MIMEText(html_content, "html", "utf-8")
 
     msg.attach(plain_part)
     msg.attach(html_part)
