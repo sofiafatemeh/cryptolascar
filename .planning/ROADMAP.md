@@ -87,7 +87,11 @@ Plans:
   5. Each tweet file contains 240-270 characters, in French, analyst tone, with 3-4 hashtags from the defined pool
   6. Each report is archived as a Markdown file in the correct subdirectory (`/reports/daily/`, `/reports/weekly/`, `/reports/monthly/`)
 **UI hint**: no
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 04-01-PLAN.md — delivery/email.py + templates/report_email.html + Markdown archiving (REPT-05, MAIL-01 through MAIL-04, STOR-01)
+- [ ] 04-02-PLAN.md — delivery/tweet.py — tweet file generator via Claude API (TWEET-01 through TWEET-04, STOR-02)
 
 ### Phase 5: Scheduling & Resilience
 **Goal**: The full pipeline runs autonomously on schedule (3 cron triggers), degrades gracefully when any source fails, and a successful end-to-end smoke test confirms the system is production-ready
@@ -110,5 +114,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Foundation | 3/3 | Complete | 2026-05-09 |
 | 2. Data Pipeline | 6/6 | Complete | 2026-05-10 |
 | 3. Report Generation | 0/4 | Not started | - |
-| 4. Delivery & Side Outputs | 0/TBD | Not started | - |
+| 4. Delivery & Side Outputs | 0/2 | Not started | - |
 | 5. Scheduling & Resilience | 0/TBD | Not started | - |
