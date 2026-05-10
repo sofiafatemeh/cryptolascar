@@ -16,21 +16,24 @@ L'utilisateur reçoit chaque matin une analyse financière actionnable et sourc�
 - [x] Logging structuré (timestamp, statut sources, erreurs par run) — Validated in Phase 1: Foundation
 - [x] Configuration 100% via .env (aucun credential hardcodé) — Validated in Phase 1: Foundation
 
+### Validated
+
+- [x] Collecte de données ETFs via Yahoo Finance / Alpha Vantage (prix, flux, performances) — Validated in Phase 2: Data Pipeline
+- [x] Collecte de données crypto via CoinGecko API (prix, Fear & Greed, on-chain signals) — Validated in Phase 2: Data Pipeline
+- [x] Collecte de données PEA France (CAC 40 / SBF 120 via Yahoo Finance + éligibilité AMF) — Validated in Phase 2: Data Pipeline
+- [x] Collecte de données macro via FRED API (taux, inflation, M2) — Validated in Phase 2: Data Pipeline
+- [x] Collecte de headlines financières via NewsAPI / GNews + scraping (Reuters, CoinDesk, Boursorama) — Validated in Phase 2: Data Pipeline
+- [x] Rapport Daily généré lun–sam à 07h00 CET (~300 mots, 6 sections) — Validated in Phase 3: Report Generation
+- [x] Rapport Weekly Wrap généré dimanche à 08h00 CET (~800 mots + tableaux) — Validated in Phase 3: Report Generation
+- [x] Rapport Monthly Close généré le dernier jour du mois à 08h00 CET (~2000 mots + tableaux) — Validated in Phase 3: Report Generation
+- [x] Synthèse narrative des sections textuelles via Claude API (claude-sonnet) — Validated in Phase 3: Report Generation
+- [x] Envoi email via Gmail SMTP (HTML + fallback plain text) — Validated in Phase 4: Delivery & Side Outputs
+- [x] Génération d'un fichier tweet quotidien /tweets/{YYYY-MM-DD}.txt (lun–sam + dimanche weekly) — Validated in Phase 4: Delivery & Side Outputs
+- [x] Archivage des rapports en Markdown dans /reports/daily/, /reports/weekly/, /reports/monthly/ — Validated in Phase 4: Delivery & Side Outputs
+
 ### Active
 
-- [ ] Collecte de données ETFs via Yahoo Finance / Alpha Vantage (prix, flux, performances)
-- [ ] Collecte de données crypto via CoinGecko API (prix, Fear & Greed, on-chain signals)
-- [ ] Collecte de données PEA France (CAC 40 / SBF 120 via Yahoo Finance + éligibilité AMF)
-- [ ] Collecte de données macro via FRED API (taux, inflation, M2)
-- [ ] Collecte de headlines financières via NewsAPI / GNews + scraping (Reuters, CoinDesk, Boursorama)
-- [ ] Rapport Daily généré lun–sam à 07h00 CET (~300 mots, 6 sections)
-- [ ] Rapport Weekly Wrap généré dimanche à 08h00 CET (~800 mots + tableaux)
-- [ ] Rapport Monthly Close généré le dernier jour du mois à 08h00 CET (~2000 mots + tableaux)
-- [ ] Synthèse narrative des sections textuelles via Claude API (claude-sonnet)
-- [ ] Envoi email via Gmail SMTP (HTML + fallback plain text)
-- [ ] Génération d'un fichier tweet quotidien /tweets/{YYYY-MM-DD}.txt (lun–sam + dimanche weekly)
 - [ ] Scheduler via APScheduler ou cron système (3 triggers: daily, sunday, end-of-month)
-- [ ] Archivage des rapports en Markdown dans /reports/daily/, /reports/weekly/, /reports/monthly/
 - [ ] Dégradation gracieuse si source indisponible (rapport partiel envoyé, gap noté)
 
 ### Out of Scope
@@ -86,4 +89,4 @@ Ce document évolue à chaque transition de phase et à chaque milestone.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-09 — Phase 1 complete: skeleton, config, SQLite, logging, main.py*
+*Last updated: 2026-05-10 — Phase 4 complete: delivery/email.py (Gmail SMTP + Jinja2), delivery/tweet.py (Claude tweet generator), 103 tests total*
