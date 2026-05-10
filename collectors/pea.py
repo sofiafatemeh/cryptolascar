@@ -205,43 +205,45 @@ def collect_pea(config: Config) -> dict:
     prices: dict[str, Any] = {}
     partial = False
 
-    for ticker in PEA_TICKERS:
-        cached = _get_cached(conn, PRICE_SOURCE, ticker, check_expiry=True)
-        if cached:
-            logger.debug("Cache hit pour le ticker PEA %s", ticker)
-            prices[ticker] = cached
-            continue
+    try:
+        for ticker in PEA_TICKERS:
+            cached = _get_cached(conn, PRICE_SOURCE, ticker, check_expiry=True)
+            if cached:
+                logger.debug("Cache hit pour le ticker PEA %s", ticker)
+                prices[ticker] = cached
+                continue
 
-        try:
-            info = yf.Ticker(ticker).fast_info
-            price = float(info.lastPrice)
-            prev = float(info.previousClose)
-            vol = int(info.regularMarketVolume) if info.regularMarketVolume else 0
-            pct = (price - prev) / prev * 100 if prev else 0.0
-            data = {
-                "price": price,
-                "prev_close": prev,
-                "pct_change": round(pct, 4),
-                "volume": vol,
-            }
-            _upsert_cache(conn, PRICE_SOURCE, ticker, data, ttl_hours=CACHE_TTL_HOURS)
-            logger.info("Cours PEA récupéré %s : price=%.2f (%.2f%%)", ticker, price, pct)
-            prices[ticker] = data
-        except Exception as exc:
-            logger.error(
-                "Échec yfinance pour le ticker PEA %s : %s", ticker, exc
-            )
-            prices[ticker] = {
-                "price": None,
-                "prev_close": None,
-                "pct_change": None,
-                "volume": None,
-                "error": str(exc),
-            }
-            partial = True
+            try:
+                info = yf.Ticker(ticker).fast_info
+                price = float(info.lastPrice)
+                prev = float(info.previousClose)
+                vol = int(info.regularMarketVolume) if info.regularMarketVolume else 0
+                pct = (price - prev) / prev * 100 if prev else 0.0
+                data = {
+                    "price": price,
+                    "prev_close": prev,
+                    "pct_change": round(pct, 4),
+                    "volume": vol,
+                }
+                _upsert_cache(conn, PRICE_SOURCE, ticker, data, ttl_hours=CACHE_TTL_HOURS)
+                logger.info("Cours PEA récupéré %s : price=%.2f (%.2f%%)", ticker, price, pct)
+                prices[ticker] = data
+            except Exception as exc:
+                logger.error(
+                    "Échec yfinance pour le ticker PEA %s : %s", ticker, exc
+                )
+                prices[ticker] = {
+                    "price": None,
+                    "prev_close": None,
+                    "pct_change": None,
+                    "volume": None,
+                    "error": str(exc),
+                }
+                partial = True
 
-    eligibility, eligibility_changed = _check_eligibility(conn)
-    conn.close()
+        eligibility, eligibility_changed = _check_eligibility(conn)
+    finally:
+        conn.close()
 
     return {
         "prices": prices,
