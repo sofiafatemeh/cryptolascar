@@ -1,6 +1,7 @@
 """tests/test_email.py — TDD RED: tests for delivery/email.py (send_email, archive_report, build_subject)."""
 from __future__ import annotations
 
+import email as email_lib
 import smtplib
 from pathlib import Path
 from unittest.mock import MagicMock, patch, call
@@ -47,27 +48,27 @@ def test_build_subject_monthly():
 
 # --- archive_report ---
 
-def test_archive_report_creates_file(tmp_path, monkeypatch):
-    monkeypatch.chdir(tmp_path)
-    (tmp_path / "reports" / "daily").mkdir(parents=True)
-    archive_report("daily", "2026-05-10", "## One Signal\n\nTexte")
+def test_archive_report_creates_file(tmp_path):
+    # Patch _REPORTS_DIR so archive_report writes to tmp_path/reports (WR-03 fix)
+    with patch("delivery.email._REPORTS_DIR", tmp_path / "reports"):
+        archive_report("daily", "2026-05-10", "## One Signal\n\nTexte")
     assert (tmp_path / "reports" / "daily" / "2026-05-10.md").exists()
 
 
-def test_archive_report_content(tmp_path, monkeypatch):
-    monkeypatch.chdir(tmp_path)
-    (tmp_path / "reports" / "daily").mkdir(parents=True)
+def test_archive_report_content(tmp_path):
+    # Patch _REPORTS_DIR so archive_report writes to tmp_path/reports (WR-03 fix)
     content = "## Section\n\nCorps du rapport"
-    archive_report("daily", "2026-05-10", content)
+    with patch("delivery.email._REPORTS_DIR", tmp_path / "reports"):
+        archive_report("daily", "2026-05-10", content)
     assert (tmp_path / "reports" / "daily" / "2026-05-10.md").read_text(encoding="utf-8") == content
 
 
-def test_archive_report_failure_reraises(tmp_path, monkeypatch):
-    monkeypatch.chdir(tmp_path)
-    (tmp_path / "reports" / "daily").mkdir(parents=True)
-    with patch("delivery.email.Path.write_text", side_effect=OSError("disk full")):
-        with pytest.raises(OSError):
-            archive_report("daily", "2026-05-10", "content")
+def test_archive_report_failure_reraises(tmp_path):
+    # Patch _REPORTS_DIR so archive_report writes to tmp_path/reports (WR-03 fix)
+    with patch("delivery.email._REPORTS_DIR", tmp_path / "reports"):
+        with patch("delivery.email.Path.write_text", side_effect=OSError("disk full")):
+            with pytest.raises(OSError):
+                archive_report("daily", "2026-05-10", "content")
 
 
 # --- send_email ---
@@ -122,7 +123,18 @@ def test_send_email_html_contains_disclaimer():
         mock_smtp.__enter__ = lambda s: mock_smtp
         mock_smtp.__exit__ = MagicMock(return_value=False)
         send_email("daily", "2026-05-10", "Texte rapport", cfg)
-    assert "Ceci n'est pas un conseil financier" in sent_messages[0]
+    assert len(sent_messages) == 1
+    # Parse MIME message and decode HTML part to find disclaimer
+    # (HTML part may be base64-encoded after CR-03 fix)
+    parsed = email_lib.message_from_string(sent_messages[0])
+    html_body = ""
+    for part in parsed.walk():
+        if part.get_content_type() == "text/html":
+            payload = part.get_payload(decode=True)
+            if payload:
+                html_body = payload.decode("utf-8", errors="replace")
+            break
+    assert "Ceci n'est pas un conseil financier" in html_body
 
 
 def test_send_email_has_plain_text_fallback():
@@ -136,9 +148,21 @@ def test_send_email_has_plain_text_fallback():
         mock_smtp.__enter__ = lambda s: mock_smtp
         mock_smtp.__exit__ = MagicMock(return_value=False)
         send_email("daily", "2026-05-10", "Texte rapport plain", cfg)
+    assert len(sent_messages) == 1
     # multipart/alternative message should contain both text/plain and text/html
-    assert "Texte rapport plain" in sent_messages[0]
-    assert "text/html" in sent_messages[0]
+    # Parse and decode MIME parts (may be base64-encoded after CR-03 fix)
+    parsed = email_lib.message_from_string(sent_messages[0])
+    content_types = set()
+    plain_body = ""
+    for part in parsed.walk():
+        ct = part.get_content_type()
+        content_types.add(ct)
+        if ct == "text/plain":
+            payload = part.get_payload(decode=True)
+            if payload:
+                plain_body = payload.decode("utf-8", errors="replace")
+    assert "Texte rapport plain" in plain_body
+    assert "text/html" in content_types
 
 
 def test_send_email_never_logs_password(caplog):
