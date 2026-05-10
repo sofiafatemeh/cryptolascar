@@ -112,6 +112,13 @@ def _pea_wrap(data: dict, config: Config) -> str:
         alert = "ALERTE — changement d'éligibilité PEA détecté.\n\n"
     prompt = f"Commentaire PEA France ~100 mots. Tickers: {list(prices.keys())}."
     body = synthesize_section(prompt, config=config, system=WEEKLY_SYSTEM_PROMPT)
+    # Garantir le mot-clé alerte si eligibility_changed (même si Claude l'a omis)
+    if (
+        pea.get("eligibility_changed")
+        and "alerte" not in body.lower()
+        and "changement" not in body.lower()
+    ):
+        body = "ALERTE — changement d'éligibilité PEA détecté. " + body
     return build_section("PEA Wrap", f"{alert}{table}\n\n{body}" if table else f"{alert}{body}")
 
 

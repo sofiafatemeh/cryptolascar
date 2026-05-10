@@ -127,9 +127,15 @@ def test_synthesize_section_never_logs_api_key(tmp_config, caplog):
     """
     Même en cas d'échec API, la clé anthropic_api_key ne doit jamais
     apparaître dans les logs (T-03-01).
+
+    Test adversarial : l'exception contient elle-même la valeur de la clé
+    pour vérifier que logger.warning ne l'expose pas via str(e).
     """
     mock_client = MagicMock()
-    mock_client.messages.create.side_effect = Exception("network error")
+    # Adversarial: exception message itself contains the key
+    mock_client.messages.create.side_effect = Exception(
+        f"AuthenticationError: key={tmp_config.anthropic_api_key}"
+    )
 
     with patch("reporters.base.Anthropic", return_value=mock_client):
         with caplog.at_level(logging.DEBUG, logger="reporters.base"):

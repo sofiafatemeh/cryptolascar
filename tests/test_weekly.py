@@ -333,6 +333,39 @@ def test_build_weekly_report_uses_configured_anthropic_model(tmp_config):
 
 
 # ---------------------------------------------------------------------------
+# Test 7b — Section PEA Wrap contient alerte si eligibility_changed=True
+# ---------------------------------------------------------------------------
+
+
+def test_build_weekly_report_includes_pea_eligibility_alert(tmp_config):
+    """
+    Si data['pea']['eligibility_changed'] = True, la section PEA Wrap doit
+    contenir le mot-clé 'alerte' (signal explicite à l'utilisateur).
+    synthesize_section retourne un texte sans 'alerte' pour forcer le secondary guard.
+    """
+    import copy
+    data = copy.deepcopy(MOCK_DATA_FULL)
+    data["pea"]["eligibility_changed"] = True
+
+    with patch("reporters.weekly.synthesize_section", return_value="NARRATION OK"):
+        report = build_weekly_report(data, tmp_config)
+
+    assert "## PEA Wrap" in report, "Section PEA Wrap absente"
+
+    # Extraire le contenu de la section PEA Wrap
+    pea_start = report.find("## PEA Wrap")
+    next_section = report.find("## News Digest")
+    pea_content = (
+        report[pea_start:next_section] if next_section != -1 else report[pea_start:]
+    )
+
+    assert "alerte" in pea_content.lower() or "changement" in pea_content.lower(), (
+        f"La section PEA Wrap doit contenir 'alerte' ou 'changement' quand "
+        f"eligibility_changed=True. Contenu PEA:\n{pea_content}"
+    )
+
+
+# ---------------------------------------------------------------------------
 # Test 8 — Dégradation totale : data={} ne lève jamais et retourne 7 sections
 # ---------------------------------------------------------------------------
 

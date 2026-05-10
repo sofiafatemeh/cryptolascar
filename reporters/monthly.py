@@ -136,13 +136,6 @@ def _pea_monthly(data: dict, config: Config) -> str:
         alert = "ALERTE — changement d'éligibilité PEA détecté ce mois.\n\n"
     prompt = "Commentaire PEA France mensuel ~150 mots. Bilan du mois pour les titres PEA."
     body = synthesize_section(prompt, config=config, system=MONTHLY_SYSTEM_PROMPT)
-    # Garantir le mot-clé alerte si eligibility_changed (même si Claude l'a omis)
-    if (
-        pea.get("eligibility_changed")
-        and "alerte" not in body.lower()
-        and "changement" not in body.lower()
-    ):
-        body = "ALERTE — changement d'éligibilité PEA détecté. " + body
     out = f"{alert}{table}\n\n{body}" if table else f"{alert}{body}"
     return build_section("PEA Monthly", out)
 

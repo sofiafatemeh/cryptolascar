@@ -49,10 +49,16 @@ def synthesize_section(
         if system:
             kwargs["system"] = system
         response = client.messages.create(**kwargs)
+        if not response.content:
+            logger.warning(
+                "Claude returned empty content list for section (stop_reason=%s)",
+                response.stop_reason,
+            )
+            return FALLBACK_TEMPLATE
         return response.content[0].text
     except Exception as e:
         # T-03-01 : on logue le type d'erreur, JAMAIS la clé API
-        logger.warning("Claude synthesis failed: %s", e)
+        logger.warning("Claude synthesis failed: %s", type(e).__name__)
         return FALLBACK_TEMPLATE
 
 
