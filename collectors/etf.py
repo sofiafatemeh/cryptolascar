@@ -185,9 +185,25 @@ def collect_etf(config: Config) -> dict:
             try:
                 data = _fetch_yfinance(symbol)
                 logger.info("yfinance OK pour %s : price=%.2f", symbol, data["price"])
+
+                # --- 3. Enrichissement Alpha Vantage (si clé présente, ticker OK, pas encore en échec) ---
+                if config.alpha_vantage_key and data.get("price") is not None and not av_failed:
+                    time.sleep(AV_SLEEP_SECONDS)
+                    av_data = _fetch_alpha_vantage(symbol, config.alpha_vantage_key)
+                    if av_data is None:
+                        av_failed = True
+                        logger.warning(
+                            "Alpha Vantage quota épuisé — basculement sur yfinance uniquement (T-02-03)"
+                        )
+                    else:
+                        data.update(av_data)
+
+                # --- 4. Mise en cache (succès uniquement) et accumulation ---
+                _upsert_cache(conn, CACHE_SOURCE, symbol, data)
+                tickers_data[symbol] = data
             except Exception as e:
                 logger.error("yfinance échec pour %s : %s", symbol, e)
-                data = {
+                tickers_data[symbol] = {
                     "price": None,
                     "prev_close": None,
                     "pct_change": None,
@@ -195,22 +211,6 @@ def collect_etf(config: Config) -> dict:
                     "error": str(e),
                 }
                 partial = True
-
-            # --- 3. Enrichissement Alpha Vantage (si clé présente, ticker OK, pas encore en échec) ---
-            if config.alpha_vantage_key and data.get("price") is not None and not av_failed:
-                time.sleep(AV_SLEEP_SECONDS)
-                av_data = _fetch_alpha_vantage(symbol, config.alpha_vantage_key)
-                if av_data is None:
-                    av_failed = True
-                    logger.warning(
-                        "Alpha Vantage quota épuisé — basculement sur yfinance uniquement (T-02-03)"
-                    )
-                else:
-                    data.update(av_data)
-
-            # --- 4. Mise en cache et accumulation ---
-            _upsert_cache(conn, CACHE_SOURCE, symbol, data)
-            tickers_data[symbol] = data
 
     except Exception as e:
         # Filet de sécurité : collect_etf ne propage jamais d'exception (Test 5)
