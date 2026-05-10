@@ -115,7 +115,7 @@ def collect_macro(config: Config) -> dict:
     Comportement :
     - Si fred_api_key vide : fred_failed=True, series={}, pas d'appel HTTP
     - Cache SQLite 24h par série (source="fred")
-    - Sleep 1.0s après chaque appel FRED réussi (rate limit T-02-15)
+    - Sleep 1.0s avant chaque appel FRED (sauf le premier) pour respecter le rate limit (T-02-15)
     - Échec d'une série : partial=True, value=None pour cette série
     - Jamais d'exception propagée — toujours retourne un dict
 
@@ -156,10 +156,6 @@ def collect_macro(config: Config) -> dict:
             first_api_call = False
 
             data = _fetch_fred_series(series_id, config.fred_api_key)
-
-            # Sleep après chaque appel réussi (1s entre les appels)
-            time.sleep(FRED_SLEEP_SECONDS)
-
             _upsert_cache(conn, CACHE_SOURCE, series_id, data)
             logger.info(
                 "FRED %s récupéré : value=%.4f (date=%s)",

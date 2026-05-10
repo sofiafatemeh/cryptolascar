@@ -125,7 +125,8 @@ def test_cache_miss_fetches_fred_and_writes_cache(tmp_config):
     mock_response = MagicMock()
     mock_response.json.return_value = MOCK_FRED_RESPONSE
 
-    with patch("httpx.get", return_value=mock_response) as mock_get:
+    with patch("httpx.get", return_value=mock_response) as mock_get, \
+         patch("collectors.macro.time.sleep"):
         result = collect_macro(tmp_config)
 
     # Valeur extraite de MOCK_FRED_RESPONSE["observations"][0]["value"]
@@ -180,7 +181,8 @@ def test_single_series_failure_sets_partial(tmp_config):
             raise Exception("FRED network error for DGS10")
         return mock_response
 
-    with patch("httpx.get", side_effect=_side_effect):
+    with patch("httpx.get", side_effect=_side_effect), \
+         patch("collectors.macro.time.sleep"):
         result = collect_macro(tmp_config)
 
     assert result["partial"] is True
