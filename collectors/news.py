@@ -319,6 +319,11 @@ def collect_news(config: Config) -> dict:
             }
     except Exception as exc:
         logger.error("Cache read error: %s", exc)
+        # Close the connection before discarding it to avoid a leak (WR-05 path 1)
+        try:
+            conn.close()
+        except Exception:
+            pass
         # On continue sans cache en cas d'erreur DB
         conn = None
 
@@ -363,9 +368,10 @@ def collect_news(config: Config) -> dict:
     if conn is not None:
         try:
             _upsert_cache(conn, final)
-            conn.close()
         except Exception as exc:
             logger.error("Cache write error: %s", exc)
+        finally:
+            conn.close()
     elif conn is None:
         # Tentative de reconnexion pour écrire le cache
         try:
