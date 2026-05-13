@@ -156,6 +156,14 @@ def write_tweet(
         tweet_text = content_block.text.strip()
     except Exception as e:
         # T-04-05 : api_key JAMAIS loggé
+        from anthropic import AuthenticationError as _AuthErr
+        if isinstance(e, _AuthErr):
+            logger.warning(
+                "Tweet skipped: ANTHROPIC_API_KEY invalide ou absent — "
+                "le run continue sans fichier tweet"
+            )
+            return None
+        # T-04-05 : api_key JAMAIS loggé
         logger.error(
             "Tweet generation failed: report_type=%s date=%s error=%s",
             report_type, date, str(e),
