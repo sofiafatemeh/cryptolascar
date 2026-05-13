@@ -25,7 +25,12 @@ Two phases transform the system from plain-text emails into visually rich financ
   3. Calling the Fear & Greed gauge function with a value (0–100) returns a base64 PNG string showing a color-coded arc gauge
   4. Calling the PEA table function with position data returns an HTML string with rows colored green (positive) or red (negative) based on performance
   5. When any single chart function raises an exception, the caller receives None (or equivalent empty sentinel), logs the error, and the report generation pipeline continues without that chart — the email is still sent
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+- [ ] 06-01-PLAN.md — charts/ package bootstrap: Agg backend + requirements.txt
+- [ ] 06-02-PLAN.md — ETF bar chart (CHART-01) + crypto sparklines (CHART-02)
+- [ ] 06-03-PLAN.md — Fear & Greed gauge (CHART-03) + PEA HTML table (CHART-04)
+- [ ] 06-04-PLAN.md — Unit tests for all 4 generators + CHART-05 fallback verification
 **UI hint**: yes
 
 ### Phase 7: Template Redesign & Integration
@@ -48,5 +53,5 @@ Phases execute in numeric order: 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 6. Chart Generation | 0/TBD | Not started | - |
+| 6. Chart Generation | 0/4 | Not started | - |
 | 7. Template Redesign & Integration | 0/TBD | Not started | - |
