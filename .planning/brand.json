@@ -1,0 +1,47 @@
+{
+  "brand_name": "Crypto Lascar",
+  "version": "2.0 - Pirate urbain français",
+  "positioning": "Personnage de marque fictif, mélange de pirate urbain, culture rue française et intelligence financière. Ton malin, stratégique, direct, sans référence à une marque déposée.",
+  "legal_note": "Ne pas utiliser de logos, signes distinctifs ou éléments graphiques appartenant à des marques existantes. Remplacer toute référence visuelle à Lacoste, TN, Nike, etc. par des codes génériques : survêtement sombre, veste technique, béret, chemise en lin, accessoires dorés.",
+  "character": {
+    "archetype": "Pirate urbain français - chasseur d'opportunités",
+    "visual_direction": "Moitié streetwear français sombre, moitié béret + chemise en lin ouverte, lunettes fines, foulard noir pirate, bijoux dorés, attitude calme et calculatrice.",
+    "removed_elements": ["crocodile", "TN", "logos de marques réelles", "armes réalistes", "promesses financières agressives"],
+    "core_elements": ["béret noir", "foulard pirate noir", "chemise lin blanc cassé", "veste noire urbaine sans logo", "bijoux dorés", "bougie de marché", "pièce crypto stylisée", "silhouette urbaine française", "tour Eiffel discrète"]
+  },
+  "colors": {
+    "or_lascar":   { "hex": "#F5C542", "usage": "accent principal, titres, détails premium, symboles crypto" },
+    "noir_bitume": { "hex": "#0D0D0D", "usage": "fond principal, contraste, univers rue" },
+    "blanc_linen": { "hex": "#F2EFE6", "usage": "typographie secondaire, chemise lin, zones lisibles" },
+    "vert_marche": { "hex": "#2E7D32", "usage": "courbes de marché, signaux positifs, détails financiers" },
+    "anthracite":  { "hex": "#1A1A1A", "usage": "cartes, textures, ombres, fonds secondaires" },
+    "or_sale":     { "hex": "#B8860B", "usage": "vieillissement, contours, effet métal patiné" }
+  },
+  "typography": {
+    "display": "Brush / graffiti sec pour CRYPTO LASCAR",
+    "heading": "Condensed bold sans-serif, style affiche urbaine",
+    "body": "Sans-serif propre, lisible, neutre"
+  },
+  "logo_system": {
+    "primary": "Buste du personnage + texte CRYPTO LASCAR + slogan court",
+    "secondary": "Tête masquée avec béret + pièce crypto stylisée",
+    "icon": "Crâne pirate stylisé avec béret, sans élément de marque",
+    "lockup": "Logo centré sur fond noir, éclats blancs en X, or en accents"
+  },
+  "slogans": [
+    "La rue enseigne, le marché récompense.",
+    "Bons plans. Marchés. Rue.",
+    "Discret dans la rue, précis sur les chiffres."
+  ],
+  "social_tone": {
+    "voice": "malin, direct, confiant, drôle mais jamais mensonger",
+    "avoid": ["promesse de richesse rapide", "incitation à investir sans risques", "usurpation de marque"]
+  },
+  "usage_rules": [
+    "Utiliser le logo principalement sur fond noir ou anthracite.",
+    "Garder l'or pour les accents, ne pas l'utiliser comme fond dominant.",
+    "Préserver une marge de respiration équivalente à la hauteur du C de Crypto autour du logo.",
+    "Ne jamais associer l'identité à des conseils financiers garantis ou promesses de gain.",
+    "Remplacer toute marque reconnaissable par des symboles génériques cousus ou des écussons abstraits."
+  ]
+}
