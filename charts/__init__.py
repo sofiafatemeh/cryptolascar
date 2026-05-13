@@ -25,8 +25,16 @@ matplotlib.use("Agg")  # MUST be called before any other matplotlib import
 
 from charts.etf import generate_etf_chart
 from charts.crypto import generate_crypto_sparklines
-from charts.gauge import generate_fear_greed_gauge
-from charts.pea import generate_pea_table
+
+try:
+    from charts.gauge import generate_fear_greed_gauge
+except ImportError:
+    generate_fear_greed_gauge = None  # type: ignore[assignment]  # not yet implemented
+
+try:
+    from charts.pea import generate_pea_table
+except ImportError:
+    generate_pea_table = None  # type: ignore[assignment]  # not yet implemented
 
 __all__ = [
     "generate_etf_chart",
