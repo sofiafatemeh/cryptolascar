@@ -1,17 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: completed
-stopped_at: context exhaustion at 76% (2026-05-10)
+milestone: v1.1
+milestone_name: Rapports Enrichis
+status: planning
 last_updated: "2026-05-13T23:30:00.000Z"
-last_activity: 2026-05-13 — Phase 5 COMPLETE — cron installé (1 8 * * *), smoke test OK, email livré sur siavach@hotmail.com
+last_activity: 2026-05-13 — Milestone v1.1 started — defining requirements
 progress:
-  total_phases: 5
-  completed_phases: 5
-  total_plans: 17
-  completed_plans: 17
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -25,12 +24,10 @@ See: .planning/PROJECT.md (updated 2026-05-09)
 
 ## Current Position
 
-Phase: 5 of 5 (Scheduling & Resilience) — COMPLETE ✅
-Plan: 2/2 complete
-Status: MILESTONE v1.0 COMPLETE — 121 tests, 5 phases, cron installé, email livré en production
-Last activity: 2026-05-13 — Phase 5 plan 02 complete — cron installed and verified by user
-
-Progress: [████████░░] 80%
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements for Milestone v1.1
+Last activity: 2026-05-13 — Milestone v1.1 started
 
 ## Performance Metrics
 

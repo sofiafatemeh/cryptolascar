@@ -1,5 +1,14 @@
 # CryptoLascar — Système d'Analyse Financière Automatisé
 
+## Current Milestone: v1.1 Rapports Enrichis
+
+**Goal:** Transformer les emails textuels en rapports visuels avec graphiques PNG inline et un template dark mode professionnel.
+
+**Target features:**
+- Graphiques PNG inline (base64) : barres ETF, sparkline crypto, gauge Fear & Greed, tableau PEA coloré
+- Refonte complète du template HTML email (dark mode financier, style Bloomberg, mobile-friendly)
+- Les 3 types de rapports (daily/weekly/monthly) bénéficient du nouveau template
+
 ## What This Is
 
 Système d'intelligence financière autonome livrant chaque matin un rapport structuré par email sur trois domaines — ETFs mondiaux, cryptomonnaies, et actions/ETFs PEA France — avec synthèse narrative générée par Claude (Anthropic). Tourne en continu sur un VPS Linux, déclenché par cron, sans intervention manuelle. Un tweet quotidien (fichier texte) est généré en parallèle du rapport daily.
@@ -31,10 +40,11 @@ L'utilisateur reçoit chaque matin une analyse financière actionnable et sourc�
 - [x] Génération d'un fichier tweet quotidien /tweets/{YYYY-MM-DD}.txt (lun–sam + dimanche weekly) — Validated in Phase 4: Delivery & Side Outputs
 - [x] Archivage des rapports en Markdown dans /reports/daily/, /reports/weekly/, /reports/monthly/ — Validated in Phase 4: Delivery & Side Outputs
 
-### Active
+### Active (v1.1)
 
-- [ ] Scheduler via APScheduler ou cron système (3 triggers: daily, sunday, end-of-month)
-- [ ] Dégradation gracieuse si source indisponible (rapport partiel envoyé, gap noté)
+- [ ] Graphiques PNG inline : barres de performance ETFs, sparkline crypto (7j), gauge Fear & Greed, tableau PEA coloré
+- [ ] Refonte complète du template HTML email (dark mode financier, fond sombre, accents orange/vert, style Bloomberg)
+- [ ] Les 3 types de rapports (daily/weekly/monthly) utilisent le nouveau template et les graphiques
 
 ### Out of Scope
 
@@ -89,4 +99,4 @@ Ce document évolue à chaque transition de phase et à chaque milestone.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-10 — Phase 4 complete: delivery/email.py (Gmail SMTP + Jinja2), delivery/tweet.py (Claude tweet generator), 103 tests total*
+*Last updated: 2026-05-13 — Milestone v1.0 complete (5 phases, 121 tests, cron installé, email livré en production). Milestone v1.1 Rapports Enrichis démarré.*
