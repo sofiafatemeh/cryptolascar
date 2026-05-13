@@ -28,7 +28,7 @@ Two phases transform the system from plain-text emails into visually rich financ
 **Plans**: 4 plans in 3 waves
 Plans:
 **Wave 1**
-- [ ] 06-01-PLAN.md — charts/ package bootstrap: Agg backend + requirements.txt
+- [x] 06-01-PLAN.md — charts/ package bootstrap: Agg backend + requirements.txt
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 06-02-PLAN.md — ETF bar chart (CHART-01) + crypto sparklines (CHART-02)
@@ -62,5 +62,5 @@ Phases execute in numeric order: 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 6. Chart Generation | 0/4 | Not started | - |
+| 6. Chart Generation | 1/4 | In progress | - |
 | 7. Template Redesign & Integration | 0/TBD | Not started | - |
