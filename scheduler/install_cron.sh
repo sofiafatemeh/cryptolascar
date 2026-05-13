@@ -11,7 +11,7 @@ PYTHON="$(command -v python3)"
 # Entrées crontab D-02 exactes
 CRON_DAILY="0 7 * * 1-6   cd $PROJECT_DIR && $PYTHON main.py --mode daily"
 CRON_WEEKLY="0 8 * * 0     cd $PROJECT_DIR && $PYTHON main.py --mode weekly"
-CRON_MONTHLY="0 8 * * *     cd $PROJECT_DIR && $PYTHON main.py --mode monthly"
+CRON_MONTHLY="1 8 * * *     cd $PROJECT_DIR && $PYTHON main.py --mode monthly"
 
 # Vérification idempotente — ne pas installer si déjà présent
 if crontab -l 2>/dev/null | grep -q "$PROJECT_DIR"; then

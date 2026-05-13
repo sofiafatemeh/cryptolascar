@@ -178,10 +178,9 @@ def send_email(
 
     try:
         if config.smtp_port == 465:
-            ctx = smtplib.SMTP_SSL(config.smtp_host, config.smtp_port)
-            ctx.login(config.smtp_user, config.smtp_password)
-            ctx.sendmail(config.smtp_user, config.recipient_list, msg.as_string())
-            ctx.quit()
+            with smtplib.SMTP_SSL(config.smtp_host, config.smtp_port) as ctx:
+                ctx.login(config.smtp_user, config.smtp_password)
+                ctx.sendmail(config.smtp_user, config.recipient_list, msg.as_string())
         else:
             with smtplib.SMTP(config.smtp_host, config.smtp_port) as smtp:
                 smtp.starttls()
