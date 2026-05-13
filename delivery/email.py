@@ -177,13 +177,20 @@ def send_email(
     msg.attach(html_part)
 
     try:
-        with smtplib.SMTP_SSL(config.smtp_host, config.smtp_port) as smtp:
-            smtp.login(config.smtp_user, config.smtp_password)
-            smtp.sendmail(
-                config.smtp_user,
-                config.recipient_list,
-                msg.as_string(),
-            )
+        if config.smtp_port == 465:
+            ctx = smtplib.SMTP_SSL(config.smtp_host, config.smtp_port)
+            ctx.login(config.smtp_user, config.smtp_password)
+            ctx.sendmail(config.smtp_user, config.recipient_list, msg.as_string())
+            ctx.quit()
+        else:
+            with smtplib.SMTP(config.smtp_host, config.smtp_port) as smtp:
+                smtp.starttls()
+                smtp.login(config.smtp_user, config.smtp_password)
+                smtp.sendmail(
+                    config.smtp_user,
+                    config.recipient_list,
+                    msg.as_string(),
+                )
         logger.info(
             "Email sent: report_type=%s date=%s recipients=%d",
             report_type, date, len(config.recipient_list),
