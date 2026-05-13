@@ -1,122 +1,52 @@
-# Roadmap: CryptoLascar — Système d'Analyse Financière Automatisé
+# Roadmap: CryptoLascar — Milestone v1.1 Rapports Enrichis
 
 ## Overview
 
-Five phases build the system bottom-up: skeleton first, then data ingestion, then report generation with LLM synthesis, then delivery and side outputs (email + tweet files), and finally the scheduler that wires everything into a continuously running autonomous pipeline. Each phase delivers a fully testable vertical slice.
+Two phases transform the system from plain-text emails into visually rich financial reports. Phase 6 builds the chart generation module (matplotlib PNG charts embedded as base64, with graceful fallback when any chart fails). Phase 7 redesigns the HTML email templates with a dark-mode Bloomberg aesthetic, mobile responsiveness, and wires all three report types to the new visual system.
 
 ## Phases
 
 **Phase Numbering:**
-- Integer phases (1, 2, 3): Planned milestone work
-- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
+- Phases 1–5 completed in Milestone v1.0
+- Milestone v1.1 continues from Phase 6
 
-Decimal phases appear between their surrounding integers in numeric order.
-
-- [x] **Phase 1: Foundation** - Project skeleton, .env config, SQLite cache, structured logging, and VPS-ready Python structure
-- [x] **Phase 2: Data Pipeline** - All data collectors (ETFs, crypto, PEA, macro, news/scraping) with rate limiting and PEA eligibility check
-- [x] **Phase 3: Report Generation** - Daily, Weekly, and Monthly report builders with Claude LLM synthesis and HTML/text formatting
-- [x] **Phase 4: Delivery & Side Outputs** - Gmail SMTP email dispatch, tweet file generation, and Markdown archiving
-- [x] **Phase 5: Scheduling & Resilience** - Cron/APScheduler triggers for all 3 report types, graceful degradation end-to-end, and full pipeline smoke test
+- [ ] **Phase 6: Chart Generation** - Matplotlib chart module producing ETF bar chart, crypto sparklines, Fear & Greed gauge, and PEA colored table — all embedded as PNG base64, with per-chart fallback on failure
+- [ ] **Phase 7: Template Redesign & Integration** - Dark mode Bloomberg-style HTML template (responsive, mobile-friendly) applied to all three report types (daily/weekly/monthly) with charts integrated
 
 ## Phase Details
 
-### Phase 1: Foundation
-**Goal**: A running Python project with all configuration loaded from .env, SQLite initialized, structured logging active, and the directory layout ready for every downstream module
-**Depends on**: Nothing (first phase)
-**Requirements**: INFRA-01, INFRA-03, INFRA-04, STOR-03, STOR-04
+### Phase 6: Chart Generation
+**Goal**: The daily report can embed four visual elements (ETF bar chart, crypto sparklines, Fear & Greed gauge, PEA colored table) as PNG base64 inline images, and any individual chart failure leaves the run unaffected
+**Depends on**: Phase 5 (v1.0 complete)
+**Requirements**: CHART-01, CHART-02, CHART-03, CHART-04, CHART-05
 **Success Criteria** (what must be TRUE):
-  1. `python main.py` (or equivalent entry point) runs without error on a clean VPS with Python 3.11+
-  2. All required .env variables are documented in .env.example and loaded at startup; missing variables raise a clear error with the variable name
-  3. SQLite database file is created automatically on first run with the correct schema
-  4. A log entry with timestamp and run status is written to the log file for every execution attempt
-  5. No credentials or secrets appear anywhere in source code — only in .env
-**Plans**: 3 plans
+  1. Calling the ETF chart function with valid performance data returns a base64 PNG string showing 1-day and 1-week variation bars for each tracked ETF
+  2. Calling the crypto sparkline function with 7-day price history for BTC and ETH returns a base64 PNG string with two labeled sparkline curves
+  3. Calling the Fear & Greed gauge function with a value (0–100) returns a base64 PNG string showing a color-coded arc gauge
+  4. Calling the PEA table function with position data returns an HTML string with rows colored green (positive) or red (negative) based on performance
+  5. When any single chart function raises an exception, the caller receives None (or equivalent empty sentinel), logs the error, and the report generation pipeline continues without that chart — the email is still sent
+**Plans**: TBD
+**UI hint**: yes
 
-Plans:
-- [x] 01-01-PLAN.md — Arborescence du projet, __init__.py des packages, requirements.txt, .gitignore
-- [x] 01-02-PLAN.md — .env.example documenté, config.py avec validation des variables obligatoires
-- [x] 01-03-PLAN.md — db/cache.py (SQLite init + schema), logging_setup.py, main.py (entry point)
-
-### Phase 2: Data Pipeline
-**Goal**: Every data source is collected reliably, rate limits are respected, historical data is cached in SQLite, and PEA eligibility changes trigger an alert flag
-**Depends on**: Phase 1
-**Requirements**: DATA-01, DATA-02, DATA-03, DATA-04, DATA-05, DATA-06, DATA-07, DATA-08
+### Phase 7: Template Redesign & Integration
+**Goal**: All three report types (daily, weekly, monthly) are delivered as visually polished HTML emails using a dark-mode financial template that renders correctly on both mobile and desktop, with charts from Phase 6 embedded where applicable
+**Depends on**: Phase 6
+**Requirements**: TMPL-01, TMPL-02, TMPL-03
 **Success Criteria** (what must be TRUE):
-  1. Running the data collection module produces a populated data dict (or equivalent structure) covering ETFs, crypto, macro, and news with no fatal exception
-  2. A repeated call within the cache TTL returns data from SQLite without hitting the external API (verified via log or counter)
-  3. If an API is unavailable (mocked or real), the collector returns a partial result with the gap noted rather than raising an unhandled exception
-  4. The PEA eligibility check runs and logs either "no change" or a detected status change against the AMF/Euronext reference
-  5. API call sequences include the required sleep delays; no rate-limit ban is triggered during a full collection run
-**Plans**: 6 plans
-
-Plans:
-- [x] 02-01-PLAN.md — collectors/etf.py — ETF price collection (SPY, QQQ, IWDA.AS, EIMI.AS, CSPX.AS) via yfinance + Alpha Vantage fallback, 4h cache
-- [x] 02-02-PLAN.md — collectors/crypto.py — Crypto prices (8 coins) via CoinGecko + Fear & Greed via Alternative.me, 1h cache
-- [x] 02-03-PLAN.md — collectors/pea.py — PEA France prices (^FCHI, ^SBF120, CW8.PA, PAEEM.PA, PANX.PA) + static eligibility check + change detection, 4h cache
-- [x] 02-04-PLAN.md — collectors/macro.py — FRED API macro indicators (DGS10, DGS2, CPIAUCSL, M2SL), 24h cache
-- [x] 02-05-PLAN.md — collectors/news.py — NewsAPI + BS4 scraping (CoinDesk, CoinTelegraph, Boursorama, AMF), 2h cache, max 35 headlines
-- [x] 02-06-PLAN.md — Integration: collect_all() in main.py wires all 5 collectors, integration tests, run_log updated
-
-### Phase 3: Report Generation
-**Goal**: All three report types (Daily, Weekly, Monthly) are generated as structured documents with Claude-synthesized narrative sections and correct section counts/word targets
-**Depends on**: Phase 2
-**Requirements**: REPT-01, REPT-02, REPT-03, REPT-04, LLM-01, LLM-02
-**Success Criteria** (what must be TRUE):
-  1. Running the daily report builder with live or fixture data produces a ~300-word, 6-section document (Macro Snapshot, ETF Radar, Crypto Pulse, PEA Alert, News Feed, One Signal)
-  2. Running the weekly report builder produces a ~800-word, 7-section document with data tables populated
-  3. Running the monthly report builder produces a ~2000-word, 7-section document with data tables populated
-  4. Narrative sections in all reports are generated by the Claude API; the active model is read from ANTHROPIC_MODEL in .env and overridable without code changes
-  5. When the last day of the month falls on a Sunday, both the Monthly Close and Weekly Wrap are generated as separate documents in the same run (REPT-04)
-**Plans**: 4 plans
-
-Plans:
-- [x] 03-01-PLAN.md — reporters/base.py (shared Claude client + format helpers, LLM-01/LLM-02)
-- [x] 03-02-PLAN.md — reporters/daily.py (Daily Report ~300w, 6 sections, REPT-01)
-- [x] 03-03-PLAN.md — reporters/weekly.py (Weekly Wrap ~800w, 7 sections + tables, REPT-02)
-- [x] 03-04-PLAN.md — reporters/monthly.py + reporters/dispatch.py (Monthly Close ~2000w + REPT-04 last-Sunday dispatcher)
-
-### Phase 4: Delivery & Side Outputs
-**Goal**: Reports are sent as formatted HTML emails via Gmail SMTP and tweet files are written to /tweets/; every report is also archived as Markdown
-**Depends on**: Phase 3
-**Requirements**: REPT-05, MAIL-01, MAIL-02, MAIL-03, MAIL-04, TWEET-01, TWEET-02, TWEET-03, TWEET-04, STOR-01, STOR-02
-**Success Criteria** (what must be TRUE):
-  1. A daily report email arrives in the recipient inbox rendered as HTML with a plain-text fallback; subject line matches `[DAILY] ...` format
-  2. Weekly and Monthly emails arrive with correct `[WEEKLY WRAP]` and `[MONTHLY CLOSE]` subject prefixes and the disclaimer footer
-  3. RECIPIENT_LIST in .env controls who receives the emails; changing it requires no code modification
-  4. A tweet file `/tweets/YYYY-MM-DD.txt` is written for each daily run (Mon-Sat) and each Sunday Weekly Wrap run; no tweet file is written for Monthly Close
-  5. Each tweet file contains 240-270 characters, in French, analyst tone, with 3-4 hashtags from the defined pool
-  6. Each report is archived as a Markdown file in the correct subdirectory (`/reports/daily/`, `/reports/weekly/`, `/reports/monthly/`)
-**UI hint**: no
-**Plans**: 2 plans
-
-Plans:
-- [x] 04-01-PLAN.md — delivery/email.py + templates/report_email.html + Markdown archiving (REPT-05, MAIL-01 through MAIL-04, STOR-01)
-- [x] 04-02-PLAN.md — delivery/tweet.py — tweet file generator via Claude API (TWEET-01 through TWEET-04, STOR-02)
-
-### Phase 5: Scheduling & Resilience
-**Goal**: The full pipeline runs autonomously on schedule (3 cron triggers), degrades gracefully when any source fails, and a successful end-to-end smoke test confirms the system is production-ready
-**Depends on**: Phase 4
-**Requirements**: SCHED-01, SCHED-02, SCHED-03, INFRA-02
-**Success Criteria** (what must be TRUE):
-  1. Cron entries (or APScheduler config) for daily Mon-Sat 07h00 CET, Sunday 08h00 CET, and end-of-month 08h00 CET are installed and verified with `crontab -l` (or equivalent)
-  2. A full end-to-end run (triggered manually or via cron) completes without unhandled exceptions and delivers the email to the recipient inbox
-  3. When one data source is deliberately taken offline (e.g., invalid API key), the run completes, a partial report is sent, and the log entry notes the failed source with the gap
-  4. The system recovers automatically the next scheduled run without manual intervention after a transient failure
-**Plans**: 2 plans
-
-Plans:
-- [x] 05-01-PLAN.md — scheduler/utils.py + main.py --mode pipeline wiring + outer try/except + tests (SCHED-01, SCHED-02, SCHED-03, INFRA-02)
-- [x] 05-02-PLAN.md — scheduler/install_cron.sh + crontab installation + end-to-end smoke test (SCHED-01, SCHED-02, SCHED-03)
+  1. The HTML email template uses a dark background, orange and green accent colors, and a typographic style consistent with professional financial terminals (Bloomberg aesthetic)
+  2. Opening the email on a mobile viewport (< 600 px wide) displays a single-column layout with readable font sizes and no horizontal overflow
+  3. Opening the email on a desktop viewport displays the intended multi-column or sectioned layout with full chart visibility
+  4. A daily report email contains all four chart elements (ETF bars, crypto sparklines, Fear & Greed gauge, PEA colored table) or their text fallbacks, using the new template
+  5. Weekly and monthly report emails use the same base template with charts relevant to their scope; the three report types are visually consistent
+**Plans**: TBD
+**UI hint**: yes
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
+Phases execute in numeric order: 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 3/3 | Complete | 2026-05-09 |
-| 2. Data Pipeline | 6/6 | Complete | 2026-05-10 |
-| 3. Report Generation | 4/4 | Complete | 2026-05-10 |
-| 4. Delivery & Side Outputs | 2/2 | Complete | 2026-05-10 |
-| 5. Scheduling & Resilience | 2/2 | Complete | 2026-05-13 |
+| 6. Chart Generation | 0/TBD | Not started | - |
+| 7. Template Redesign & Integration | 0/TBD | Not started | - |

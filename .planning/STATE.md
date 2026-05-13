@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Rapports Enrichis
 status: planning
-last_updated: "2026-05-13T23:30:00.000Z"
-last_activity: 2026-05-13 — Milestone v1.1 started — defining requirements
+last_updated: "2026-05-13T23:45:00.000Z"
+last_activity: 2026-05-13 — Roadmap v1.1 created — 2 phases (6-7), ready to plan Phase 6
 progress:
-  total_phases: 0
+  total_phases: 2
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -17,36 +17,40 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-05-09)
+See: .planning/PROJECT.md (updated 2026-05-13)
 
 **Core value:** L'utilisateur reçoit chaque matin une analyse financière actionnable et sourcée couvrant ETFs, crypto et PEA — sans aucune action manuelle — directement dans sa boîte email.
-**Current focus:** Phase 5 — Scheduling & Resilience (ready to plan)
+**Current focus:** Phase 6 — Chart Generation (ready to plan)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 6 — Chart Generation
 Plan: —
-Status: Defining requirements for Milestone v1.1
-Last activity: 2026-05-13 — Milestone v1.1 started
+Status: Roadmap created — awaiting /gsd-plan-phase 6
+Last activity: 2026-05-13 — Milestone v1.1 roadmap written (Phase 6 + Phase 7)
+
+Progress: 0/2 phases | 0% complete
+[░░░░░░░░░░░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
-**Velocity:**
+**Velocity (v1.0 baseline):**
 
-- Total plans completed: 3
-- Average duration: 3.3 minutes
-- Total execution time: 0.17 hours
+- Total plans completed (v1.0): 17
+- Average duration: ~3–4 minutes per plan
+- Total execution time: ~1 hour (v1.0)
 
-**By Phase:**
+**By Phase (v1.0 reference):**
 
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| Phase 1 | 3 | 10 min | 3.3 min |
+| Phase | Plans | Avg/Plan |
+|-------|-------|----------|
+| Phase 1 | 3 | 3.3 min |
+| Phase 2 | 6 | ~4 min |
+| Phase 3 | 4 | ~4 min |
+| Phase 4 | 2 | ~4 min |
+| Phase 5 | 2 | ~4 min |
 
-**Recent Trend:**
-
-- Last 5 plans: 01-01 (3 min), 01-02 (2 min), 01-03 (5 min)
-- Trend: —
+**v1.1 tracking starts at Phase 6.**
 
 *Updated after each plan completion*
 
@@ -55,13 +59,13 @@ Last activity: 2026-05-13 — Milestone v1.1 started
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
+Carried forward from v1.0:
 
 - Init: Claude (Anthropic) for narrative synthesis — no OpenAI
 - Init: Gmail SMTP only — no SendGrid/Mailgun
 - Init: Tweet files only — no auto-post to Twitter/X
 - Init: SQLite for cache — no external DB infrastructure
-- Init: APScheduler or cron system — both viable, choose at Phase 5
+- Init: APScheduler or cron system — cron selected in Phase 5
 - 01-01: SQLAlchemy non inclus en Phase 1 — sqlite3 standard library suffit pour le cache v1
 - 01-02: load_dotenv(override=False) — variables système prioritaires sur .env (sécurité VPS)
 - 01-02: _require() expose uniquement le NOM de la variable dans ValueError, pas sa valeur
@@ -94,6 +98,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-10T15:05:39.607Z
-Stopped at: context exhaustion at 76% (2026-05-10)
+Last session: 2026-05-13
+Stopped at: Milestone v1.1 roadmap created
 Resume file: None
