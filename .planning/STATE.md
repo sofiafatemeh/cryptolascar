@@ -4,14 +4,14 @@ milestone: v1.0
 milestone_name: milestone
 status: completed
 stopped_at: context exhaustion at 76% (2026-05-10)
-last_updated: "2026-05-13T00:00:00.000Z"
-last_activity: 2026-05-13 — Phase 5 plan 05-01 complete — scheduler/utils.py + main.py --mode pipeline + 121 tests passing
+last_updated: "2026-05-13T23:30:00.000Z"
+last_activity: 2026-05-13 — Phase 5 COMPLETE — cron installé (1 8 * * *), smoke test OK, email livré sur siavach@hotmail.com
 progress:
   total_phases: 5
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 17
-  completed_plans: 16
-  percent: 94
+  completed_plans: 17
+  percent: 100
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-05-09)
 
 ## Current Position
 
-Phase: 5 of 5 (Scheduling & Resilience) — IN PROGRESS
-Plan: 1/2 complete
-Status: Phase 5 plan 01 complete — scheduler/utils.py + main.py --mode pipeline wired + 121 tests passing
-Last activity: 2026-05-10 — Phase 4 complete — TDD RED/GREEN gates, 25 new tests, zero regressions
+Phase: 5 of 5 (Scheduling & Resilience) — COMPLETE ✅
+Plan: 2/2 complete
+Status: MILESTONE v1.0 COMPLETE — 121 tests, 5 phases, cron installé, email livré en production
+Last activity: 2026-05-13 — Phase 5 plan 02 complete — cron installed and verified by user
 
 Progress: [████████░░] 80%
 

@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Data Pipeline** - All data collectors (ETFs, crypto, PEA, macro, news/scraping) with rate limiting and PEA eligibility check
 - [x] **Phase 3: Report Generation** - Daily, Weekly, and Monthly report builders with Claude LLM synthesis and HTML/text formatting
 - [x] **Phase 4: Delivery & Side Outputs** - Gmail SMTP email dispatch, tweet file generation, and Markdown archiving
-- [ ] **Phase 5: Scheduling & Resilience** - Cron/APScheduler triggers for all 3 report types, graceful degradation end-to-end, and full pipeline smoke test
+- [x] **Phase 5: Scheduling & Resilience** - Cron/APScheduler triggers for all 3 report types, graceful degradation end-to-end, and full pipeline smoke test
 
 ## Phase Details
 
@@ -106,7 +106,7 @@ Plans:
 
 Plans:
 - [x] 05-01-PLAN.md — scheduler/utils.py + main.py --mode pipeline wiring + outer try/except + tests (SCHED-01, SCHED-02, SCHED-03, INFRA-02)
-- [ ] 05-02-PLAN.md — scheduler/install_cron.sh + crontab installation + end-to-end smoke test (SCHED-01, SCHED-02, SCHED-03)
+- [x] 05-02-PLAN.md — scheduler/install_cron.sh + crontab installation + end-to-end smoke test (SCHED-01, SCHED-02, SCHED-03)
 
 ## Progress
 
@@ -119,4 +119,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Data Pipeline | 6/6 | Complete | 2026-05-10 |
 | 3. Report Generation | 4/4 | Complete | 2026-05-10 |
 | 4. Delivery & Side Outputs | 2/2 | Complete | 2026-05-10 |
-| 5. Scheduling & Resilience | 1/2 | In progress | - |
+| 5. Scheduling & Resilience | 2/2 | Complete | 2026-05-13 |
