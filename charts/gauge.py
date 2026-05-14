@@ -87,7 +87,8 @@ def generate_fear_greed_gauge(score) -> Optional[str]:
             logger.error(f"Chart gauge failed: score {score} out of range [0, 100]")
             return None
 
-        active_color, active_label = _zone_for_score(score)
+        score_int = int(round(score))
+        active_color, active_label = _zone_for_score(score_int)
 
         fig, ax = plt.subplots(figsize=(5, 3))   # UI-SPEC: figsize=(5, 3)
         fig.patch.set_facecolor(CHART_BG)
@@ -100,7 +101,7 @@ def generate_fear_greed_gauge(score) -> Optional[str]:
         for lo, hi, color, label in ZONES:
             zone_start_angle = _score_to_angle(hi)    # higher score → smaller angle
             zone_end_angle   = _score_to_angle(lo)    # lower score  → larger angle
-            is_active = (lo <= score <= hi)
+            is_active = (lo <= score_int <= hi)
             alpha = 1.0 if is_active else 0.25        # UI-SPEC: inactive alpha = 0.25
 
             wedge = mpatches.Wedge(
