@@ -158,8 +158,8 @@ def generate_pea_table(pea_data: Optional[list]) -> Optional[str]:
             row_style = f"background-color:{row_bg};"
 
             # T-06-11: HTML-escape all string fields from external data (ASVS L1)
-            safe_ticker = html.escape(str(item.get("ticker", "") or ""), quote=False) or "—"
-            safe_name = html.escape(str(item.get("name", "") or ""), quote=False) or "—"
+            safe_ticker = html.escape(str(item.get("ticker", "") or ""), quote=True) or "—"
+            safe_name   = html.escape(str(item.get("name",   "") or ""), quote=True) or "—"
 
             # Ticker — left-aligned
             ticker_td = (
