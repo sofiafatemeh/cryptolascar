@@ -28,13 +28,19 @@ from charts.crypto import generate_crypto_sparklines
 
 try:
     from charts.gauge import generate_fear_greed_gauge
-except ImportError:
-    generate_fear_greed_gauge = None  # type: ignore[assignment]  # not yet implemented
+except ImportError as e:
+    import logging as _logging
+    _logging.getLogger(__name__).error(f"charts.gauge unavailable: {e}")
+    def generate_fear_greed_gauge(score) -> None:  # type: ignore[misc]
+        return None
 
 try:
     from charts.pea import generate_pea_table
-except ImportError:
-    generate_pea_table = None  # type: ignore[assignment]  # not yet implemented
+except ImportError as e:
+    import logging as _logging
+    _logging.getLogger(__name__).error(f"charts.pea unavailable: {e}")
+    def generate_pea_table(pea_data) -> None:  # type: ignore[misc]
+        return None
 
 __all__ = [
     "generate_etf_chart",
