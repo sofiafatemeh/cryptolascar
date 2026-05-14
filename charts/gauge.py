@@ -21,6 +21,8 @@ import io
 import math
 from typing import Optional
 
+import matplotlib
+matplotlib.use("Agg")  # non-interactive backend, VPS-safe
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 
