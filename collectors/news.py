@@ -184,7 +184,7 @@ def _scrape_boursorama(html: bytes, base_url: str) -> list[dict]:
         href = a_tag["href"]
         if (
             title
-            and len(title) > 20
+            and len(title) > 40
             and ("actu" in href or "article" in href or "actualite" in href)
         ):
             if href.startswith("/"):

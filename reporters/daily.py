@@ -160,11 +160,12 @@ def _news_section(data: dict, config: Config) -> str:
     if news.get("source_failed"):
         return build_section("News Feed", "Headlines indisponibles ce matin.")
     headlines = news.get("headlines", [])[:7]
-    if not headlines:
-        return build_section("News Feed", "Aucun titre récent disponible.")
+    real = [h for h in headlines if len(h.get("title", "")) > 40]
+    if not real:
+        return build_section("News Feed", "Aucune actualité disponible ce matin.")
     bullets = "\n".join(
         f"- {h.get('title', 'titre manquant')} ({h.get('source', '?')})"
-        for h in headlines
+        for h in real
     )
     prompt = (
         f"Liste structurée des titres financiers du matin :\n{bullets}\n"
