@@ -35,6 +35,7 @@ from collectors.news import collect_news
 from reporters.dispatch import select_reports
 from delivery.email import send_email, archive_report
 from delivery.tweet import write_tweet
+from delivery.vercel import push_report
 from scheduler.utils import is_last_day_of_month
 
 logger = get_logger("cryptolascar.main")
@@ -225,6 +226,7 @@ def main(argv: list[str] | None = None) -> int:
                 year_str = str(today.year)
 
             archive_report(report_type, date_str, report_text.plain_text)
+            push_report(report_type, today, content_md=report_text.plain_text)
             send_email(
                 report_type, date_str, report_text.plain_text, config,
                 month=month_fr, year=year_str,

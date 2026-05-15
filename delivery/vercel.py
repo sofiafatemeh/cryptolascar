@@ -7,9 +7,6 @@ import httpx
 
 logger = logging.getLogger(__name__)
 
-_VERCEL_URL = os.getenv("VERCEL_INGEST_URL", "").rstrip("/")
-_API_KEY = os.getenv("INGEST_API_KEY", "")
-
 
 def push_report(
     report_type: str,
@@ -18,7 +15,9 @@ def push_report(
     content_html: str | None = None,
     metadata: dict | None = None,
 ) -> bool:
-    if not _VERCEL_URL or not _API_KEY:
+    vercel_url = os.getenv("VERCEL_INGEST_URL", "").rstrip("/")
+    api_key = os.getenv("INGEST_API_KEY", "")
+    if not vercel_url or not api_key:
         logger.warning("VERCEL_INGEST_URL or INGEST_API_KEY not set — skipping push")
         return False
 
@@ -32,8 +31,8 @@ def push_report(
 
     try:
         resp = httpx.post(
-            f"{_VERCEL_URL}/api/ingest",
-            headers={"x-api-key": _API_KEY, "Content-Type": "application/json"},
+            f"{vercel_url}/api/ingest",
+            headers={"x-api-key": api_key, "Content-Type": "application/json"},
             content=json.dumps(payload),
             timeout=15,
         )
