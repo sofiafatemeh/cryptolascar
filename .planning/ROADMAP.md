@@ -91,6 +91,9 @@ Plans:
 **Wave 3** *(blocked on Wave 2 completion)*
 - [ ] 08-03-PLAN.md — tests/test_chart_boundary.py boundary tests + 06-VERIFICATION.md
 
+**Cross-cutting constraints:**
+- All chart data transforms happen in _build_chart_panel (all 3 reporters), not in collectors or generators
+- CHART-05 graceful degradation: every chart path returns fallback HTML, never raises
 **UI hint**: no
 
 ## Progress

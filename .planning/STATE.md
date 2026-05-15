@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Rapports Enrichis
 status: executing
-stopped_at: Phase 7 executing — Wave 3 starting (07-04)
-last_updated: "2026-05-15T08:30:00.000Z"
-last_activity: 2026-05-15 — 07-03 complete (reporters return ReportOutput + 2×2 chart panel)
+stopped_at: Phase 8 planned — 3 plans in 3 waves, ready to execute
+last_updated: "2026-05-15T09:00:00.000Z"
+last_activity: 2026-05-15 — Phase 8 planned (3 plans covering CHART-01/02/03/04/05 fixes + 06-VERIFICATION.md)
 progress:
-  total_phases: 2
+  total_phases: 3
   completed_phases: 1
-  total_plans: 8
+  total_plans: 11
   completed_plans: 6
-  percent: 75
+  percent: 55
 ---
 
 # Project State
@@ -21,17 +21,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-13)
 
 **Core value:** L'utilisateur reçoit chaque matin une analyse financière actionnable et sourcée couvrant ETFs, crypto et PEA — sans aucune action manuelle — directement dans sa boîte email.
-**Current focus:** Phase 6 — Chart Generation (executing — Wave 2: charts/etf.py, charts/crypto.py, charts/gauge.py, charts/pea.py)
+**Current focus:** Phase 8 — Close Gaps (ready to execute — 3 plans, Wave 1 starts with collector fixes)
 
 ## Current Position
 
-Phase: 6 — Chart Generation
-Plan: 06-01 ✓ | 06-02 ▶ | 06-03 ▶ (Wave 2 starting)
-Status: Executing — Wave 2 of 3
-Last activity: 2026-05-13 — 06-01 complete (charts/ bootstrap, requirements.txt updated)
+Phase: 8 — Close Gaps
+Plan: 08-01 ○ | 08-02 ○ | 08-03 ○
+Status: Ready to execute — Wave 1 of 3
+Last activity: 2026-05-15 — Phase 8 planned (CHART-01/02/03/04/05 fixes + 06-VERIFICATION.md)
 
-Progress: 0/2 phases | 25% plans complete (1/4)
-[████░░░░░░░░░░░░░░░░] 25%
+Progress: 1/3 phases complete | 6/11 plans complete (55%)
+[██████████░░░░░░░░░░] 55%
 
 ## Performance Metrics
 
@@ -82,6 +82,10 @@ Carried forward from v1.0:
 - 02-04-A: time.sleep(1.0s) après chaque appel FRED réussi (non avant) — logique first_api_call bool pour éviter sleep inutile en tête
 - 02-04-B: patch("httpx.get") dans les tests (non "collectors.macro.httpx.get") car httpx importé au niveau module
 - 02-04-C: Clé FRED jamais loguée (T-02-13) — seuls series_id et str(e) dans logger.error()
+
+### Roadmap Evolution
+
+- Phase 8 inserted after Phase 7 (URGENT) — Close gaps: CHART-01/02/04 data contracts + CHART-03 fallback fix + Phase 6 VERIFICATION.md — inserted 2026-05-15 after milestone audit revealed production charts are all broken
 
 ### Pending Todos
 
