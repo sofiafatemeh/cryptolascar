@@ -79,12 +79,16 @@ def _markdown_to_html(text: str) -> str:
         if line.startswith("## "):
             safe_content = html_stdlib.escape(line[3:])
             html_lines.append(
-                f'<h2 style="color:#1a1a2e;font-size:18px;margin-top:24px;">{safe_content}</h2>'
+                f'<h2 style="color:#FF6B35;font-family:\'Courier New\',monospace;'
+                f'font-size:18px;font-weight:700;line-height:1.2;margin-bottom:12px;">'
+                f'{safe_content}</h2>'
             )
         elif line.startswith("# "):
             safe_content = html_stdlib.escape(line[2:])
             html_lines.append(
-                f'<h1 style="color:#1a1a2e;font-size:22px;">{safe_content}</h1>'
+                f'<h1 style="color:#FF6B35;font-family:\'Courier New\',monospace;'
+                f'font-size:22px;font-weight:700;line-height:1.2;margin-bottom:12px;">'
+                f'{safe_content}</h1>'
             )
         elif line.strip() == "":
             html_lines.append("")
@@ -93,8 +97,12 @@ def _markdown_to_html(text: str) -> str:
     # Joindre, puis entourer les blocs de texte en <p>
     raw = "\n".join(html_lines)
     # Remplacer les doubles sauts de ligne entre texte par </p><p>
-    raw = re.sub(r"\n{2,}", "</p><p>", raw)
-    return f"<p>{raw}</p>"
+    p_style = (
+        'style="color:#e0e0e0;font-family:\'Courier New\',monospace;'
+        'font-size:14px;line-height:1.6;"'
+    )
+    raw = re.sub(r"\n{2,}", f'</p><p {p_style}>', raw)
+    return f'<p {p_style}>{raw}</p>'
 
 
 def archive_report(report_type: str, date: str, content: str) -> None:
