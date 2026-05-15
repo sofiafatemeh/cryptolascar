@@ -13,7 +13,6 @@ export interface Report {
 export async function saveReport(report: Report): Promise<void> {
   const pathname = `reports/${report.type}/${report.date}.json`
   await put(pathname, JSON.stringify(report), {
-    access: 'private',
     contentType: 'application/json',
     addRandomSuffix: false,
   })
