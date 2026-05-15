@@ -20,10 +20,12 @@ export async function saveReport(report: Report): Promise<void> {
   })
 }
 
+const BLOB_TOKEN = process.env.BLOB2_READ_WRITE_TOKEN
+
 export async function getLatestReport(type: ReportType): Promise<Report | null> {
-  if (!process.env.BLOB_READ_WRITE_TOKEN) return null
+  if (!BLOB_TOKEN) return null
   try {
-    const { blobs } = await list({ prefix: `reports/${type}/` })
+    const { blobs } = await list({ prefix: `reports/${type}/`, token: BLOB_TOKEN })
     if (!blobs.length) return null
     const sorted = blobs.sort((a, b) => b.pathname.localeCompare(a.pathname))
     const res = await fetch(sorted[0].url, { next: { revalidate: 60 } })
@@ -34,9 +36,9 @@ export async function getLatestReport(type: ReportType): Promise<Report | null> 
 }
 
 export async function getReport(type: ReportType, date: string): Promise<Report | null> {
-  if (!process.env.BLOB_READ_WRITE_TOKEN) return null
+  if (!BLOB_TOKEN) return null
   try {
-    const { blobs } = await list({ prefix: `reports/${type}/${date}` })
+    const { blobs } = await list({ prefix: `reports/${type}/${date}`, token: BLOB_TOKEN })
     if (!blobs.length) return null
     const res = await fetch(blobs[0].url)
     return res.json()
@@ -46,9 +48,9 @@ export async function getReport(type: ReportType, date: string): Promise<Report 
 }
 
 export async function listReports(type: ReportType): Promise<{ date: string; url: string }[]> {
-  if (!process.env.BLOB_READ_WRITE_TOKEN) return []
+  if (!BLOB_TOKEN) return []
   try {
-    const { blobs } = await list({ prefix: `reports/${type}/` })
+    const { blobs } = await list({ prefix: `reports/${type}/`, token: BLOB_TOKEN })
     return blobs
       .sort((a, b) => b.pathname.localeCompare(a.pathname))
       .map(b => ({
