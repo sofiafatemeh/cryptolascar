@@ -252,7 +252,114 @@ def test_select_reports_never_raises_when_builder_fails(tmp_config, empty_data):
 
     # Le résultat doit être un dict (même partiel)
     assert isinstance(result, dict), "select_reports doit toujours retourner un dict"
-    # Si "daily" est présent, sa valeur doit être une chaîne non vide (message d'erreur)
+    # Si "daily" est présent, sa valeur doit être un ReportOutput non vide
+    from reporters.base import ReportOutput
     if "daily" in result:
-        assert isinstance(result["daily"], str), "La valeur de 'daily' doit être une chaîne"
-        assert len(result["daily"]) > 0, "La chaîne fallback ne doit pas être vide"
+        assert isinstance(result["daily"], ReportOutput), (
+            "La valeur de 'daily' doit être un ReportOutput (pas une str brute)"
+        )
+        assert len(result["daily"].plain_text) > 0, "Le fallback plain_text ne doit pas être vide"
+
+
+# ---------------------------------------------------------------------------
+# Nouveaux tests — _safe_build et select_reports retournent ReportOutput
+# ---------------------------------------------------------------------------
+
+
+def test_safe_build_success_returns_reportoutput(tmp_config):
+    """
+    _safe_build() doit retourner le résultat du builder tel quel lorsqu'il réussit.
+    Lorsque le builder retourne un ReportOutput, _safe_build doit retourner ce ReportOutput.
+    """
+    from reporters.base import ReportOutput
+    from reporters.dispatch import _safe_build
+
+    expected = ReportOutput(html_body="<p>html</p>", plain_text="plain text")
+
+    def ok_builder(data, config):
+        return expected
+
+    result = _safe_build(ok_builder, "Test", {}, tmp_config)
+    assert isinstance(result, ReportOutput), (
+        f"_safe_build doit retourner un ReportOutput, got {type(result)}"
+    )
+    assert result.html_body == "<p>html</p>", "html_body doit être préservé"
+    assert result.plain_text == "plain text", "plain_text doit être préservé"
+
+
+def test_safe_build_exception_returns_reportoutput_fallback(tmp_config):
+    """
+    _safe_build() doit retourner un ReportOutput dégradé (pas lever) quand le builder échoue.
+    """
+    from reporters.base import ReportOutput
+    from reporters.dispatch import _safe_build
+
+    def failing_builder(data, config):
+        raise RuntimeError("Crash simulé")
+
+    result = _safe_build(failing_builder, "Daily Report", {}, tmp_config)
+    assert isinstance(result, ReportOutput), (
+        f"Fallback de _safe_build doit être un ReportOutput, got {type(result)}"
+    )
+    assert len(result.plain_text) > 0, "plain_text du fallback ne doit pas être vide"
+    assert len(result.html_body) > 0, "html_body du fallback ne doit pas être vide"
+
+
+def test_safe_build_fallback_contains_reporter_name(tmp_config):
+    """
+    Le ReportOutput de fallback doit contenir le nom du reporter dans html_body et plain_text.
+    """
+    from reporters.base import ReportOutput
+    from reporters.dispatch import _safe_build
+
+    def failing_builder(data, config):
+        raise ValueError("Erreur de test")
+
+    result = _safe_build(failing_builder, "Monthly Close", {}, tmp_config)
+    assert "Monthly Close" in result.plain_text, (
+        "Le nom du reporter doit apparaître dans plain_text"
+    )
+    assert "Monthly Close" in result.html_body, (
+        "Le nom du reporter doit apparaître dans html_body"
+    )
+
+
+def test_select_reports_returns_reportoutput_values(tmp_config, empty_data):
+    """
+    select_reports() doit retourner un dict dont toutes les valeurs sont des ReportOutput.
+    """
+    from reporters.base import ReportOutput
+    from reporters.dispatch import select_reports
+
+    wednesday = date(2026, 5, 13)
+    mock_output = ReportOutput(html_body="<p>html</p>", plain_text="texte plain")
+
+    with patch("reporters.dispatch.build_daily_report", return_value=mock_output):
+        result = select_reports(wednesday, empty_data, tmp_config)
+
+    assert "daily" in result
+    assert isinstance(result["daily"], ReportOutput), (
+        f"select_reports doit retourner des ReportOutput, got {type(result['daily'])}"
+    )
+    assert result["daily"].html_body == "<p>html</p>"
+    assert result["daily"].plain_text == "texte plain"
+
+
+def test_select_reports_dict_annotation_is_reportoutput(tmp_config, empty_data):
+    """
+    Le type de retour de select_reports doit être Dict[str, ReportOutput].
+    Vérifié via isinstance sur chaque valeur.
+    """
+    from reporters.base import ReportOutput
+    from reporters.dispatch import select_reports
+
+    wednesday = date(2026, 5, 13)
+    mock_output = ReportOutput(html_body="<div>x</div>", plain_text="x")
+
+    with patch("reporters.dispatch.build_daily_report", return_value=mock_output):
+        result = select_reports(wednesday, empty_data, tmp_config)
+
+    for key, value in result.items():
+        assert isinstance(value, ReportOutput), (
+            f"Clé '{key}' doit être un ReportOutput, got {type(value)}"
+        )
