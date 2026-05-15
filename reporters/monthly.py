@@ -17,8 +17,20 @@ Threat model :
 """
 from __future__ import annotations
 
+import html as _html
+
 from config import Config
-from reporters.base import synthesize_section, build_section, format_pct, format_currency
+from reporters.base import (
+    synthesize_section, build_section, format_pct, format_currency,
+    ReportOutput, html_section,
+    ETF_FALLBACK, CRYPTO_FALLBACK, GAUGE_FALLBACK, PEA_FALLBACK,
+)
+from charts import (
+    generate_etf_chart,
+    generate_crypto_sparklines,
+    generate_fear_greed_gauge,
+    generate_pea_table,
+)
 from logging_setup import get_logger
 
 logger = get_logger(__name__)
@@ -171,7 +183,82 @@ def _forward_look(data: dict, config: Config) -> str:
     return build_section("Forward Look", body)
 
 
-def build_monthly_report(data: dict, config: Config) -> str:
+def _build_chart_panel(data: dict, date_str: str) -> str:
+    """Build 2x2 chart panel HTML (D-11 / UI-SPEC §Chart Panel). Never raises."""
+    etf_data = data.get("etf") or {}
+    crypto_data = data.get("crypto") or {}
+    pea_data = data.get("pea") or {}
+    fg_score = (data.get("crypto") or {}).get("fear_greed", {}).get("value")
+
+    try:
+        etf_b64 = generate_etf_chart(etf_data, date_str)
+    except Exception:
+        etf_b64 = None
+    etf_cell = (
+        f'<img src="data:image/png;base64,{etf_b64}" alt="ETF Chart"'
+        f' style="display:block;max-width:100%;height:auto;margin:16px 0;" />'
+        if etf_b64 else ETF_FALLBACK
+    )
+
+    try:
+        btc_hist = (crypto_data.get("coins") or {}).get("bitcoin", {}).get("history", [])
+        eth_hist = (crypto_data.get("coins") or {}).get("ethereum", {}).get("history", [])
+        crypto_b64 = generate_crypto_sparklines(btc_hist, eth_hist)
+    except Exception:
+        crypto_b64 = None
+    crypto_cell = (
+        f'<img src="data:image/png;base64,{crypto_b64}" alt="Crypto Sparklines"'
+        f' style="display:block;max-width:100%;height:auto;margin:16px 0;" />'
+        if crypto_b64 else CRYPTO_FALLBACK
+    )
+
+    try:
+        gauge_b64 = generate_fear_greed_gauge(fg_score) if fg_score is not None else None
+    except Exception:
+        gauge_b64 = None
+    gauge_cell = (
+        f'<img src="data:image/png;base64,{gauge_b64}" alt="Fear &amp; Greed Gauge"'
+        f' style="display:block;max-width:100%;height:auto;margin:16px 0;" />'
+        if gauge_b64 else GAUGE_FALLBACK
+    )
+
+    try:
+        pea_html = generate_pea_table(pea_data)
+    except Exception:
+        pea_html = None
+    pea_cell = pea_html if pea_html else PEA_FALLBACK
+
+    return (
+        '<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">'
+        '<tr>'
+        f'<td class="chart-cell" width="50%" style="vertical-align:top;padding:8px;">{etf_cell}</td>'
+        f'<td class="chart-cell" width="50%" style="vertical-align:top;padding:8px;">{crypto_cell}</td>'
+        '</tr>'
+        '<tr>'
+        f'<td class="chart-cell" width="50%" style="vertical-align:top;padding:8px;">{gauge_cell}</td>'
+        f'<td class="chart-cell" width="50%" style="vertical-align:top;padding:8px;">{pea_cell}</td>'
+        '</tr>'
+        '</table>'
+    )
+
+
+def _sections_to_html(sections: list[str]) -> str:
+    """Convert Markdown sections list to html_section() card HTML."""
+    parts = []
+    for md_section in sections:
+        lines_s = md_section.strip().split("\n", 2)
+        title_s = lines_s[0].lstrip("# ").strip() if lines_s else "Section"
+        body_md = lines_s[2].strip() if len(lines_s) > 2 else ""
+        body_escaped = _html.escape(body_md)
+        p_body = (
+            f'<p style="color:#e0e0e0;font-family:\'Courier New\',monospace;'
+            f'font-size:14px;line-height:1.6;">{body_escaped}</p>'
+        )
+        parts.append(html_section(title_s, p_body))
+    return "".join(parts)
+
+
+def build_monthly_report(data: dict, config: Config) -> ReportOutput:
     """
     Construit le Monthly Close (~2000 mots, 7 sections, ≥ 2 tableaux).
 
@@ -191,7 +278,7 @@ def build_monthly_report(data: dict, config: Config) -> str:
                 Le modèle n'est JAMAIS hardcodé dans ce module (LLM-02).
 
     Returns:
-        Rapport Markdown complet (chaîne) — toujours 7 sections, jamais lève.
+        ReportOutput(html_body, plain_text) — toujours 7 sections, jamais lève.
 
     Ne lève jamais — filet de sécurité global en cas d'erreur inattendue.
     """
@@ -205,12 +292,15 @@ def build_monthly_report(data: dict, config: Config) -> str:
             _news_themes(data, config),
             _forward_look(data, config),
         ]
-        return "\n".join(sections)
+        plain_text = "\n".join(sections)
+        chart_panel = _build_chart_panel(data, "")
+        html_body = chart_panel + _sections_to_html(sections)
+        return ReportOutput(html_body=html_body, plain_text=plain_text)
     except Exception as e:
         # T-03-13 : on logue uniquement le message d'erreur, JAMAIS la config (clé API)
         logger.error("build_monthly_report failed: %s", e)
         # Filet de sécurité — retourner les 7 titres en mode dégradé total
-        return "\n".join(
+        fallback_plain = "\n".join(
             build_section(t, "[Section indisponible.]")
             for t in (
                 "Month in Review",
@@ -222,3 +312,16 @@ def build_monthly_report(data: dict, config: Config) -> str:
                 "Forward Look",
             )
         )
+        fallback_html = "".join(
+            html_section(t, '<p style="color:#e0e0e0;">[Section indisponible.]</p>')
+            for t in (
+                "Month in Review",
+                "Macro Backdrop",
+                "ETF Monthly Performance",
+                "Crypto Monthly",
+                "PEA Monthly",
+                "News & Themes",
+                "Forward Look",
+            )
+        )
+        return ReportOutput(html_body=fallback_html, plain_text=fallback_plain)

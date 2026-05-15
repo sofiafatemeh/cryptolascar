@@ -156,7 +156,82 @@ def _outlook(data: dict, config: Config) -> str:
     return build_section("Outlook", body)
 
 
-def build_weekly_report(data: dict, config: Config) -> str:
+def _build_chart_panel(data: dict, date_str: str) -> str:
+    """Build 2x2 chart panel HTML (D-11 / UI-SPEC §Chart Panel). Never raises."""
+    etf_data = data.get("etf") or {}
+    crypto_data = data.get("crypto") or {}
+    pea_data = data.get("pea") or {}
+    fg_score = (data.get("crypto") or {}).get("fear_greed", {}).get("value")
+
+    try:
+        etf_b64 = generate_etf_chart(etf_data, date_str)
+    except Exception:
+        etf_b64 = None
+    etf_cell = (
+        f'<img src="data:image/png;base64,{etf_b64}" alt="ETF Chart"'
+        f' style="display:block;max-width:100%;height:auto;margin:16px 0;" />'
+        if etf_b64 else ETF_FALLBACK
+    )
+
+    try:
+        btc_hist = (crypto_data.get("coins") or {}).get("bitcoin", {}).get("history", [])
+        eth_hist = (crypto_data.get("coins") or {}).get("ethereum", {}).get("history", [])
+        crypto_b64 = generate_crypto_sparklines(btc_hist, eth_hist)
+    except Exception:
+        crypto_b64 = None
+    crypto_cell = (
+        f'<img src="data:image/png;base64,{crypto_b64}" alt="Crypto Sparklines"'
+        f' style="display:block;max-width:100%;height:auto;margin:16px 0;" />'
+        if crypto_b64 else CRYPTO_FALLBACK
+    )
+
+    try:
+        gauge_b64 = generate_fear_greed_gauge(fg_score) if fg_score is not None else None
+    except Exception:
+        gauge_b64 = None
+    gauge_cell = (
+        f'<img src="data:image/png;base64,{gauge_b64}" alt="Fear &amp; Greed Gauge"'
+        f' style="display:block;max-width:100%;height:auto;margin:16px 0;" />'
+        if gauge_b64 else GAUGE_FALLBACK
+    )
+
+    try:
+        pea_html = generate_pea_table(pea_data)
+    except Exception:
+        pea_html = None
+    pea_cell = pea_html if pea_html else PEA_FALLBACK
+
+    return (
+        '<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">'
+        '<tr>'
+        f'<td class="chart-cell" width="50%" style="vertical-align:top;padding:8px;">{etf_cell}</td>'
+        f'<td class="chart-cell" width="50%" style="vertical-align:top;padding:8px;">{crypto_cell}</td>'
+        '</tr>'
+        '<tr>'
+        f'<td class="chart-cell" width="50%" style="vertical-align:top;padding:8px;">{gauge_cell}</td>'
+        f'<td class="chart-cell" width="50%" style="vertical-align:top;padding:8px;">{pea_cell}</td>'
+        '</tr>'
+        '</table>'
+    )
+
+
+def _sections_to_html(sections: list[str]) -> str:
+    """Convert Markdown sections list to html_section() card HTML."""
+    parts = []
+    for md_section in sections:
+        lines_s = md_section.strip().split("\n", 2)
+        title_s = lines_s[0].lstrip("# ").strip() if lines_s else "Section"
+        body_md = lines_s[2].strip() if len(lines_s) > 2 else ""
+        body_escaped = _html.escape(body_md)
+        p_body = (
+            f'<p style="color:#e0e0e0;font-family:\'Courier New\',monospace;'
+            f'font-size:14px;line-height:1.6;">{body_escaped}</p>'
+        )
+        parts.append(html_section(title_s, p_body))
+    return "".join(parts)
+
+
+def build_weekly_report(data: dict, config: Config) -> ReportOutput:
     """
     Construit le Weekly Wrap (~800 mots, 7 sections + tableaux).
 
@@ -165,7 +240,7 @@ def build_weekly_report(data: dict, config: Config) -> str:
         config: Config avec anthropic_api_key et anthropic_model
 
     Returns:
-        Rapport Markdown complet — toujours 7 sections, jamais lève.
+        ReportOutput(html_body, plain_text) — toujours 7 sections, jamais lève.
     """
     try:
         sections = [
@@ -177,11 +252,20 @@ def build_weekly_report(data: dict, config: Config) -> str:
             _news_digest(data, config),
             _outlook(data, config),
         ]
-        return "\n".join(sections)
+        plain_text = "\n".join(sections)
+        chart_panel = _build_chart_panel(data, "")
+        html_body = chart_panel + _sections_to_html(sections)
+        return ReportOutput(html_body=html_body, plain_text=plain_text)
     except Exception as e:
         logger.error("build_weekly_report failed: %s", e)
-        return "\n".join(
+        fallback_plain = "\n".join(
             build_section(t, "[Section indisponible.]")
             for t in ("Executive Summary", "Macro Watch", "ETF Performance",
                       "Crypto Recap", "PEA Wrap", "News Digest", "Outlook")
         )
+        fallback_html = "".join(
+            html_section(t, '<p style="color:#e0e0e0;">[Section indisponible.]</p>')
+            for t in ("Executive Summary", "Macro Watch", "ETF Performance",
+                      "Crypto Recap", "PEA Wrap", "News Digest", "Outlook")
+        )
+        return ReportOutput(html_body=fallback_html, plain_text=fallback_plain)

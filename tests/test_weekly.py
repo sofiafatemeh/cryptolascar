@@ -179,9 +179,10 @@ def test_build_weekly_report_returns_seven_sections(tmp_config):
     mock_narration = " ".join(["mot"] * 100)
 
     with patch("reporters.weekly.synthesize_section", return_value=mock_narration):
-        report = build_weekly_report(MOCK_DATA_FULL, tmp_config)
+        result = build_weekly_report(MOCK_DATA_FULL, tmp_config)
 
     # Compter les titres de section ##
+    report = result.plain_text
     lines = report.splitlines()
     section_lines = [l for l in lines if l.startswith("## ")]
     assert len(section_lines) >= 7, (
@@ -202,8 +203,9 @@ def test_build_weekly_report_word_count_in_target_range(tmp_config):
     mock_narration = " ".join(["mot"] * 100)
 
     with patch("reporters.weekly.synthesize_section", return_value=mock_narration):
-        report = build_weekly_report(MOCK_DATA_FULL, tmp_config)
+        result = build_weekly_report(MOCK_DATA_FULL, tmp_config)
 
+    report = result.plain_text
     word_count = len(report.split())
     assert 650 <= word_count <= 1000, (
         f"Nombre de mots hors fourchette: {word_count} (attendu 650-1000)"
@@ -223,8 +225,9 @@ def test_build_weekly_report_contains_markdown_tables(tmp_config):
     mock_narration = " ".join(["mot"] * 100)
 
     with patch("reporters.weekly.synthesize_section", return_value=mock_narration):
-        report = build_weekly_report(MOCK_DATA_FULL, tmp_config)
+        result = build_weekly_report(MOCK_DATA_FULL, tmp_config)
 
+    report = result.plain_text
     has_table = any('|' in line and line.count('|') >= 2 for line in report.splitlines())
     assert has_table, "Le rapport doit contenir au moins un tableau Markdown (lignes |...|...|)"
 
@@ -242,8 +245,9 @@ def test_build_weekly_report_etf_table_lists_all_tickers(tmp_config):
     data = {**MOCK_DATA_FULL, "etf": MOCK_ETF_EXTENDED}
 
     with patch("reporters.weekly.synthesize_section", return_value=mock_narration):
-        report = build_weekly_report(data, tmp_config)
+        result = build_weekly_report(data, tmp_config)
 
+    report = result.plain_text
     expected_tickers = ["SPY", "QQQ", "IWDA.AS", "EIMI.AS", "CSPX.AS"]
     for ticker in expected_tickers:
         assert ticker in report, f"Ticker {ticker} absent du rapport ETF"
@@ -287,8 +291,9 @@ def test_build_weekly_report_handles_partial_data(tmp_config):
     }
 
     with patch("reporters.weekly.synthesize_section", return_value=mock_narration):
-        report = build_weekly_report(data, tmp_config)
+        result = build_weekly_report(data, tmp_config)
 
+    report = result.plain_text
     lines = report.splitlines()
     section_lines = [l for l in lines if l.startswith("## ")]
     assert len(section_lines) >= 7, (
@@ -348,8 +353,9 @@ def test_build_weekly_report_includes_pea_eligibility_alert(tmp_config):
     data["pea"]["eligibility_changed"] = True
 
     with patch("reporters.weekly.synthesize_section", return_value="NARRATION OK"):
-        report = build_weekly_report(data, tmp_config)
+        result = build_weekly_report(data, tmp_config)
 
+    report = result.plain_text
     assert "## PEA Wrap" in report, "Section PEA Wrap absente"
 
     # Extraire le contenu de la section PEA Wrap
@@ -377,10 +383,11 @@ def test_build_weekly_report_never_raises(tmp_config):
     """
     with patch("reporters.weekly.synthesize_section", return_value="Section indisponible."):
         try:
-            report = build_weekly_report({}, tmp_config)
+            result = build_weekly_report({}, tmp_config)
         except Exception as e:
             pytest.fail(f"build_weekly_report a levé une exception avec data={{}}: {e}")
 
+    report = result.plain_text
     lines = report.splitlines()
     section_lines = [l for l in lines if l.startswith("## ")]
     assert len(section_lines) >= 7, (

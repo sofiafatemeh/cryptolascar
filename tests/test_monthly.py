@@ -175,13 +175,14 @@ def data_complete():
 
 def test_build_monthly_report_returns_seven_sections(tmp_config, data_complete):
     """
-    Avec synthesize_section mocké, build_monthly_report doit retourner une chaîne
-    contenant exactement les 7 titres de section définis par REPT-03.
+    Avec synthesize_section mocké, build_monthly_report doit retourner un ReportOutput
+    contenant exactement les 7 titres de section définis par REPT-03 dans plain_text.
     """
     with patch("reporters.monthly.synthesize_section", return_value="NARRATION OK"):
-        report = build_monthly_report(data_complete, tmp_config)
+        result = build_monthly_report(data_complete, tmp_config)
 
-    assert isinstance(report, str), "build_monthly_report doit retourner une chaîne"
+    report = result.plain_text
+    assert isinstance(report, str), "plain_text doit être une chaîne"
 
     expected_sections = [
         "## Month in Review",
@@ -212,8 +213,9 @@ def test_build_monthly_report_word_count_in_target_range(tmp_config, data_comple
     filler_250_words = " ".join(["lorem"] * 250)
 
     with patch("reporters.monthly.synthesize_section", return_value=filler_250_words):
-        report = build_monthly_report(data_complete, tmp_config)
+        result = build_monthly_report(data_complete, tmp_config)
 
+    report = result.plain_text
     word_count = len(report.split())
     assert 1700 <= word_count <= 2300, (
         f"Compte de mots hors fourchette [1700, 2300] : {word_count} mots.\n"
@@ -232,8 +234,9 @@ def test_build_monthly_report_contains_at_least_two_tables(tmp_config, data_comp
     Un tableau est détecté comme un bloc de lignes consécutives commençant par '|'.
     """
     with patch("reporters.monthly.synthesize_section", return_value="NARRATION OK"):
-        report = build_monthly_report(data_complete, tmp_config)
+        result = build_monthly_report(data_complete, tmp_config)
 
+    report = result.plain_text
     # Compter les blocs de lignes consécutives contenant '|...|...|'
     lines = report.split("\n")
     table_count = 0
@@ -317,12 +320,13 @@ def test_build_monthly_report_uses_configured_anthropic_model(tmp_config, data_c
 def test_build_monthly_report_handles_missing_data_gracefully(tmp_config):
     """
     Avec data = {} (aucune donnée disponible), build_monthly_report ne doit
-    pas lever d'exception et doit retourner un rapport avec les 7 sections.
+    pas lever d'exception et doit retourner un ReportOutput avec les 7 sections.
     """
     with patch("reporters.monthly.synthesize_section", return_value="NARRATION OK"):
-        report = build_monthly_report({}, tmp_config)
+        result = build_monthly_report({}, tmp_config)
 
-    assert isinstance(report, str), "build_monthly_report doit retourner une chaîne même avec data={}"
+    report = result.plain_text
+    assert isinstance(report, str), "plain_text doit être une chaîne même avec data={}"
 
     expected_sections = [
         "## Month in Review",
@@ -353,8 +357,9 @@ def test_build_monthly_report_includes_pea_eligibility_alert(tmp_config, data_co
     data_complete["pea"]["eligibility_changed"] = True
 
     with patch("reporters.monthly.synthesize_section", return_value="NARRATION OK"):
-        report = build_monthly_report(data_complete, tmp_config)
+        result = build_monthly_report(data_complete, tmp_config)
 
+    report = result.plain_text
     assert "## PEA Monthly" in report, "Section PEA Monthly absente"
 
     # Extraire le contenu de la section PEA Monthly
