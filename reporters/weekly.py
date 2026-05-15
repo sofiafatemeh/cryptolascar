@@ -182,8 +182,8 @@ def _build_chart_panel(data: dict, date_str: str) -> str:
     etf_raw = data.get("etf") or {}
     etf_chart_data = {
         sym: {
-            "1d": t.get("pct_change") or 0.0,
-            "1w": t.get("pct_change_1w") or 0.0,
+            "1d": t.get("pct_change") if t.get("pct_change") is not None else 0.0,
+            "1w": t.get("pct_change_1w") if t.get("pct_change_1w") is not None else 0.0,
         }
         for sym, t in (etf_raw.get("tickers") or {}).items()
         if t.get("pct_change") is not None
