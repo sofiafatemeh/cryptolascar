@@ -174,6 +174,7 @@ def collect_crypto(config: Config) -> dict:
     coins_data: dict[str, Any] = {}
     cg_failed = False
     fg_failed = False
+    fg_data = None  # CR-01: initialize before try so return is always safe
 
     try:
         # Vérifier si tous les coins sont en cache
@@ -227,6 +228,10 @@ def collect_crypto(config: Config) -> dict:
         fg_data = _fetch_fear_greed(conn)
         if fg_data is None:
             fg_failed = True
+    except Exception as e:  # CR-01: outer except to enforce "never raises" contract
+        logger.error("Unexpected error in collect_crypto: %s", e)
+        cg_failed = True
+        fg_failed = True
     finally:
         conn.close()
     return {
