@@ -52,7 +52,21 @@ Plans:
   3. Opening the email on a desktop viewport displays the intended multi-column or sectioned layout with full chart visibility
   4. A daily report email contains all four chart elements (ETF bars, crypto sparklines, Fear & Greed gauge, PEA colored table) or their text fallbacks, using the new template
   5. Weekly and monthly report emails use the same base template with charts relevant to their scope; the three report types are visually consistent
-**Plans**: TBD
+**Plans**: 4 plans in 3 waves
+Plans:
+**Wave 1**
+- [x] 07-01-PLAN.md — reporters/base.py (ReportOutput, html_section, fallback constants)
+- [x] 07-02-PLAN.md — delivery/email.py dark-mode template + _markdown_to_html + send_email html_body param
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [x] 07-03-PLAN.md — reporters/daily.py + weekly.py + monthly.py → return ReportOutput + 2×2 chart panel
+
+**Wave 3** *(blocked on Wave 2 completion)*
+- [ ] 07-04-PLAN.md — reporters/dispatch.py + main.py wiring + integration smoke test
+
+**Cross-cutting constraints:**
+- All reporters return ReportOutput(html_body, plain_text) — never bare str
+- Graceful degradation: outer try/except always returns ReportOutput, never raises
 **UI hint**: yes
 
 ## Progress
@@ -63,4 +77,4 @@ Phases execute in numeric order: 6 → 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 6. Chart Generation | 1/4 | In progress | - |
-| 7. Template Redesign & Integration | 0/TBD | Not started | - |
+| 7. Template Redesign & Integration | 3/4 | In progress | - |
