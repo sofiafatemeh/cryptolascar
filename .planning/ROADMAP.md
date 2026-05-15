@@ -12,6 +12,7 @@ Two phases transform the system from plain-text emails into visually rich financ
 
 - [ ] **Phase 6: Chart Generation** - Matplotlib chart module producing ETF bar chart, crypto sparklines, Fear & Greed gauge, and PEA colored table — all embedded as PNG base64, with per-chart fallback on failure
 - [ ] **Phase 7: Template Redesign & Integration** - Dark mode Bloomberg-style HTML template (responsive, mobile-friendly) applied to all three report types (daily/weekly/monthly) with charts integrated
+- [ ] **Phase 8: Close Gaps** - Close gaps: CHART-01/02/04 data contracts + CHART-03 fallback fix + Phase 6 VERIFICATION.md (INSERTED)
 
 ## Phase Details
 
@@ -69,12 +70,36 @@ Plans:
 - Graceful degradation: outer try/except always returns ReportOutput, never raises
 **UI hint**: yes
 
+### Phase 8: Close Gaps (INSERTED)
+**Goal**: All CHART-01/02/04 data-contract mismatches are fixed (real charts render in production), CHART-03 unguarded AttributeError is patched, 7-day sparkline data is collected, and Phase 6 VERIFICATION.md is written
+**Depends on**: Phase 7
+**Requirements**: CHART-01, CHART-02, CHART-03, CHART-04, CHART-05
+**Success Criteria** (what must be TRUE):
+  1. Running a real daily report (no mocks) shows an ETF bar chart with 1-day and 1-week bars in the email
+  2. Running a real daily report shows crypto sparklines for BTC and ETH (7-day history collected via separate CoinGecko endpoint)
+  3. Running a real daily report shows the PEA colored table with per-position rows correctly colored
+  4. When collect_crypto stores fear_greed=None, the Fear & Greed gauge is silently skipped (None returned) and the rest of the report is unaffected
+  5. Phase 6 VERIFICATION.md exists and confirms all five CHART-* requirements satisfied
+**Plans**: 3 plans in 3 waves
+Plans:
+**Wave 1**
+- [ ] 08-01-PLAN.md — collectors/etf.py (pct_change_1w) + collectors/crypto.py (sparkline history)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 08-02-PLAN.md — reporters/daily.py + weekly.py + monthly.py: ETF transform + PEA transform + CHART-03 fg_score fix
+
+**Wave 3** *(blocked on Wave 2 completion)*
+- [ ] 08-03-PLAN.md — tests/test_chart_boundary.py boundary tests + 06-VERIFICATION.md
+
+**UI hint**: no
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 6 → 7
+Phases execute in numeric order: 6 → 7 → 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 6. Chart Generation | 1/4 | In progress | - |
 | 7. Template Redesign & Integration | 3/4 | In progress | - |
+| 8. Close Gaps (INSERTED) | 0/3 | Planned | - |
