@@ -13,7 +13,7 @@ Couverture :
   Test 6 — coins["bitcoin"]["history"] est une liste de floats (len >= 2) quand market_chart OK
   Test 7 — coins["ethereum"]["history"] est une liste de floats (len >= 2)
   Test 8 — quand market_chart échoue, coins["bitcoin"] existe sans KeyError ("history" absent ou [])
-  Test 9 — sparkline skip when coins came from cache (no extra call for cached data)
+  Test 9 — sparkline fetched even when coins come from cache (sparkline has its own cache)
   Test 10 — sparkline data stored in cache with source="coingecko_sparkline"
 """
 from __future__ import annotations
@@ -388,7 +388,7 @@ def test_sparkline_failure_graceful_degradation(tmp_config):
 
 
 # ---------------------------------------------------------------------------
-# Test 9 — sparkline skipped when coins come from cache
+# Test 9 — sparkline fetched when coins from cache but sparkline cache is empty
 # ---------------------------------------------------------------------------
 
 
