@@ -10,8 +10,8 @@ Two phases transform the system from plain-text emails into visually rich financ
 - Phases 1–5 completed in Milestone v1.0
 - Milestone v1.1 continues from Phase 6
 
-- [ ] **Phase 6: Chart Generation** - Matplotlib chart module producing ETF bar chart, crypto sparklines, Fear & Greed gauge, and PEA colored table — all embedded as PNG base64, with per-chart fallback on failure
-- [ ] **Phase 7: Template Redesign & Integration** - Dark mode Bloomberg-style HTML template (responsive, mobile-friendly) applied to all three report types (daily/weekly/monthly) with charts integrated
+- [x] **Phase 6: Chart Generation** - Matplotlib chart module producing ETF bar chart, crypto sparklines, Fear & Greed gauge, and PEA colored table — all embedded as PNG base64, with per-chart fallback on failure — 2026-05-15
+- [x] **Phase 7: Template Redesign & Integration** - Dark mode Bloomberg-style HTML template (responsive, mobile-friendly) applied to all three report types (daily/weekly/monthly) with charts integrated — 2026-05-15
 - [x] **Phase 8: Close Gaps** - Close gaps: CHART-01/02/04 data contracts + CHART-03 fallback fix + Phase 6 VERIFICATION.md (INSERTED) — 2026-05-15
 
 ## Phase Details
@@ -32,11 +32,11 @@ Plans:
 - [x] 06-01-PLAN.md — charts/ package bootstrap: Agg backend + requirements.txt
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 06-02-PLAN.md — ETF bar chart (CHART-01) + crypto sparklines (CHART-02)
-- [ ] 06-03-PLAN.md — Fear & Greed gauge (CHART-03) + PEA HTML table (CHART-04)
+- [x] 06-02-PLAN.md — ETF bar chart (CHART-01) + crypto sparklines (CHART-02)
+- [x] 06-03-PLAN.md — Fear & Greed gauge (CHART-03) + PEA HTML table (CHART-04)
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 06-04-PLAN.md — Unit tests for all 4 generators + CHART-05 fallback verification
+- [x] 06-04-PLAN.md — Unit tests for all 4 generators + CHART-05 fallback verification
 
 **Cross-cutting constraints:**
 - Every chart function MUST return `Optional[str]` and catch all exceptions (CHART-05)
@@ -63,7 +63,7 @@ Plans:
 - [x] 07-03-PLAN.md — reporters/daily.py + weekly.py + monthly.py → return ReportOutput + 2×2 chart panel
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 07-04-PLAN.md — reporters/dispatch.py + main.py wiring + integration smoke test
+- [x] 07-04-PLAN.md — reporters/dispatch.py + main.py wiring + integration smoke test
 
 **Cross-cutting constraints:**
 - All reporters return ReportOutput(html_body, plain_text) — never bare str
@@ -103,6 +103,6 @@ Phases execute in numeric order: 6 → 7 → 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 6. Chart Generation | 1/4 | In progress | - |
-| 7. Template Redesign & Integration | 3/4 | In progress | - |
+| 6. Chart Generation | 4/4 | Complete | 2026-05-15 |
+| 7. Template Redesign & Integration | 4/4 | Complete | 2026-05-15 |
 | 8. Close Gaps (INSERTED) | 3/3 | Complete | 2026-05-15 |
