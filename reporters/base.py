@@ -9,6 +9,9 @@ Threat model :
 """
 from __future__ import annotations
 
+import html as _html_stdlib
+from typing import NamedTuple
+
 from anthropic import Anthropic
 from config import Config
 from logging_setup import get_logger
@@ -17,6 +20,23 @@ logger = get_logger(__name__)
 
 DEFAULT_MAX_TOKENS = 1024
 FALLBACK_TEMPLATE = "[Section indisponible — synthèse Claude temporairement indisponible.]"
+
+# Chart fallback HTML strings (CHART-05 / D-15) — use exactly; from Phase 6 UI-SPEC Copywriting Contract
+ETF_FALLBACK    = '<p style="color:#888;font-style:italic;">[Graphique ETF indisponible]</p>'
+CRYPTO_FALLBACK = '<p style="color:#888;font-style:italic;">[Graphique crypto indisponible]</p>'
+GAUGE_FALLBACK  = '<p style="color:#888;font-style:italic;">[Gauge Fear &amp; Greed indisponible]</p>'
+PEA_FALLBACK    = '<p style="color:#888;font-style:italic;">[Tableau PEA indisponible]</p>'
+
+
+class ReportOutput(NamedTuple):
+    """Dual output from reporter build functions (D-02).
+
+    html_body: Rich HTML string — chart <img> tags + PEA table + section <div> cards.
+               Passed to Jinja2 template with | safe filter.
+    plain_text: Unchanged Markdown narrative — fed to MIME text/plain part (D-05).
+    """
+    html_body: str
+    plain_text: str
 
 
 def synthesize_section(
@@ -65,6 +85,28 @@ def synthesize_section(
 def build_section(title: str, body: str) -> str:
     """Assemble une section au format Markdown : '## {title}\\n\\n{body}\\n'."""
     return f"## {title}\n\n{body}\n"
+
+
+def html_section(title: str, body_html: str) -> str:
+    """Assemble une section HTML dark-mode card (D-10, UI-SPEC §Narrative Sections).
+
+    Args:
+        title: section title — HTML-escaped inside this function (XSS prevention)
+        body_html: pre-built HTML content — caller is responsible for escaping
+
+    Returns:
+        str: <div> card with background:#111111, orange h2 heading, Courier New font
+    """
+    safe_title = _html_stdlib.escape(title)
+    return (
+        '<div style="background:#111111;border:1px solid #2a2a2a;'
+        'padding:16px;margin-bottom:8px;">'
+        f'<h2 style="color:#FF6B35;font-family:\'Courier New\',monospace;'
+        f'font-size:18px;font-weight:700;margin-top:0;margin-bottom:12px;'
+        f'line-height:1.2;">{safe_title}</h2>'
+        f'{body_html}'
+        '</div>'
+    )
 
 
 def format_pct(value: float) -> str:
