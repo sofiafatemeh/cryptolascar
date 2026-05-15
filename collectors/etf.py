@@ -203,7 +203,7 @@ def collect_etf(config: Config) -> dict:
         for symbol in ETF_TICKERS:
             # --- 1. Vérification du cache ---
             cached = _get_cached(conn, CACHE_SOURCE, symbol)
-            if cached:
+            if cached and "pct_change_1w" in cached:  # WR-02: treat stale entries without key as miss
                 logger.debug("Cache hit pour %s", symbol)
                 tickers_data[symbol] = cached
                 continue
