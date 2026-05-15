@@ -83,7 +83,7 @@ Plans:
 **Plans**: 3 plans in 3 waves
 Plans:
 **Wave 1**
-- [ ] 08-01-PLAN.md — collectors/etf.py (pct_change_1w) + collectors/crypto.py (sparkline history)
+- [x] 08-01-PLAN.md — collectors/etf.py (pct_change_1w) + collectors/crypto.py (sparkline history)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 08-02-PLAN.md — reporters/daily.py + weekly.py + monthly.py: ETF transform + PEA transform + CHART-03 fg_score fix
@@ -105,4 +105,4 @@ Phases execute in numeric order: 6 → 7 → 8
 |-------|----------------|--------|-----------|
 | 6. Chart Generation | 1/4 | In progress | - |
 | 7. Template Redesign & Integration | 3/4 | In progress | - |
-| 8. Close Gaps (INSERTED) | 0/3 | Planned | - |
+| 8. Close Gaps (INSERTED) | 1/3 | In progress | - |

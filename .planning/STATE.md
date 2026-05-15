@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Rapports Enrichis
 status: executing
-stopped_at: Phase 8 planned — 3 plans in 3 waves, ready to execute
-last_updated: "2026-05-15T09:00:00.000Z"
-last_activity: 2026-05-15 — Phase 8 planned (3 plans covering CHART-01/02/03/04/05 fixes + 06-VERIFICATION.md)
+stopped_at: Completed 08-01 — data layer fixes for CHART-01/02
+last_updated: "2026-05-15T10:15:00.000Z"
+last_activity: 2026-05-15 — Phase 8 Plan 01 executed (pct_change_1w + sparkline history collectors)
 progress:
   total_phases: 3
   completed_phases: 1
   total_plans: 11
-  completed_plans: 6
-  percent: 55
+  completed_plans: 7
+  percent: 64
 ---
 
 # Project State
@@ -26,12 +26,12 @@ See: .planning/PROJECT.md (updated 2026-05-13)
 ## Current Position
 
 Phase: 8 — Close Gaps
-Plan: 08-01 ○ | 08-02 ○ | 08-03 ○
-Status: Ready to execute — Wave 1 of 3
-Last activity: 2026-05-15 — Phase 8 planned (CHART-01/02/03/04/05 fixes + 06-VERIFICATION.md)
+Plan: 08-01 DONE | 08-02 ○ | 08-03 ○
+Status: Executing — Wave 2 ready (reporter transforms)
+Last activity: 2026-05-15 — 08-01 complete: pct_change_1w + sparkline history collectors
 
-Progress: 1/3 phases complete | 6/11 plans complete (55%)
-[██████████░░░░░░░░░░] 55%
+Progress: 1/3 phases complete | 7/11 plans complete (64%)
+[████████████░░░░░░░░] 64%
 
 ## Performance Metrics
 
@@ -82,6 +82,10 @@ Carried forward from v1.0:
 - 02-04-A: time.sleep(1.0s) après chaque appel FRED réussi (non avant) — logique first_api_call bool pour éviter sleep inutile en tête
 - 02-04-B: patch("httpx.get") dans les tests (non "collectors.macro.httpx.get") car httpx importé au niveau module
 - 02-04-C: Clé FRED jamais loguée (T-02-13) — seuls series_id et str(e) dans logger.error()
+- 08-01-A: _fetch_1w_pct séparée de _fetch_yfinance — même Ticker, appel history indépendant, résultat ajouté avant upsert cache
+- 08-01-B: Sparklines enrichies même sur cache batch hit — cache sparkline (coingecko_sparkline) vérifié séparément, TTL 1h propre
+- 08-01-C: history=[] sur échec market_chart — generate_crypto_sparklines retourne None (fallback existant)
+- 08-01-D: test_cache_hit_skips_coingecko mis à jour pour pré-remplir cache sparkline — comportement correct par conception
 
 ### Roadmap Evolution
 
@@ -103,6 +107,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-14T18:44:59.426Z
-Stopped at: Phase 7 context gathered
-Resume file: .planning/phases/07-template-redesign-integration/07-CONTEXT.md
+Last session: 2026-05-15T10:15:00.000Z
+Stopped at: Completed 08-01-PLAN.md — data layer fixes for CHART-01/CHART-02
+Resume file: .planning/phases/08-close-gaps/08-02-PLAN.md
