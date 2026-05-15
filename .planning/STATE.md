@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Rapports Enrichis
 status: executing
-stopped_at: Completed 08-01 — data layer fixes for CHART-01/02
-last_updated: "2026-05-15T10:15:00.000Z"
-last_activity: 2026-05-15 — Phase 8 Plan 01 executed (pct_change_1w + sparkline history collectors)
+stopped_at: Completed 08-02 — reporter transform layer fixes (CHART-01/03/04)
+last_updated: "2026-05-15T12:00:00.000Z"
+last_activity: 2026-05-15 — Phase 8 Plan 02 executed (etf_chart_data + pea_list + fg_score None-safe in 3 reporters)
 progress:
   total_phases: 3
   completed_phases: 1
@@ -26,12 +26,12 @@ See: .planning/PROJECT.md (updated 2026-05-13)
 ## Current Position
 
 Phase: 8 — Close Gaps
-Plan: 08-01 DONE | 08-02 ○ | 08-03 ○
-Status: Executing — Wave 2 ready (reporter transforms)
-Last activity: 2026-05-15 — 08-01 complete: pct_change_1w + sparkline history collectors
+Plan: 08-01 DONE | 08-02 DONE | 08-03 ○
+Status: Executing — Wave 3 ready (Phase 6 VERIFICATION.md)
+Last activity: 2026-05-15 — 08-02 complete: reporter transform layer (CHART-01/03/04)
 
-Progress: 1/3 phases complete | 7/11 plans complete (64%)
-[████████████░░░░░░░░] 64%
+Progress: 1/3 phases complete | 8/11 plans complete (73%)
+[██████████████░░░░░░] 73%
 
 ## Performance Metrics
 
@@ -86,6 +86,10 @@ Carried forward from v1.0:
 - 08-01-B: Sparklines enrichies même sur cache batch hit — cache sparkline (coingecko_sparkline) vérifié séparément, TTL 1h propre
 - 08-01-C: history=[] sur échec market_chart — generate_crypto_sparklines retourne None (fallback existant)
 - 08-01-D: test_cache_hit_skips_coingecko mis à jour pour pré-remplir cache sparkline — comportement correct par conception
+- 08-02-A: _PEA_NAMES/_PEA_ELIGIBILITY définis au niveau module dans les 3 reporters — séparation config/logique
+- 08-02-B: etf_chart_data filtre pct_change is not None — conforme T-08-05 (tamper filter)
+- 08-02-C: pea_list filtre price is not None — évite lignes vides dans generate_pea_table
+- 08-02-D: _crypto_section daily.py corrigée (Rule 1) — fg = crypto.get('fear_greed', {}) retournait None si valeur=None
 
 ### Roadmap Evolution
 
@@ -107,6 +111,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-15T10:15:00.000Z
-Stopped at: Completed 08-01-PLAN.md — data layer fixes for CHART-01/CHART-02
-Resume file: .planning/phases/08-close-gaps/08-02-PLAN.md
+Last session: 2026-05-15T12:00:00.000Z
+Stopped at: Completed 08-02-PLAN.md — reporter transform layer (CHART-01/03/04)
+Resume file: .planning/phases/08-close-gaps/08-03-PLAN.md

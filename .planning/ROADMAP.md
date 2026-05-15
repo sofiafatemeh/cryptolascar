@@ -86,7 +86,7 @@ Plans:
 - [x] 08-01-PLAN.md — collectors/etf.py (pct_change_1w) + collectors/crypto.py (sparkline history)
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 08-02-PLAN.md — reporters/daily.py + weekly.py + monthly.py: ETF transform + PEA transform + CHART-03 fg_score fix
+- [x] 08-02-PLAN.md — reporters/daily.py + weekly.py + monthly.py: ETF transform + PEA transform + CHART-03 fg_score fix
 
 **Wave 3** *(blocked on Wave 2 completion)*
 - [ ] 08-03-PLAN.md — tests/test_chart_boundary.py boundary tests + 06-VERIFICATION.md
