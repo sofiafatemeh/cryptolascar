@@ -17,6 +17,7 @@ Threat model :
 """
 from __future__ import annotations
 
+import datetime as _dt
 import html as _html
 
 from config import Config
@@ -252,7 +253,7 @@ def _sections_to_html(sections: list[str]) -> str:
         body_escaped = _html.escape(body_md)
         p_body = (
             f'<p style="color:#e0e0e0;font-family:\'Courier New\',monospace;'
-            f'font-size:14px;line-height:1.6;">{body_escaped}</p>'
+            f'font-size:14px;line-height:1.6;white-space:pre-wrap;">{body_escaped}</p>'
         )
         parts.append(html_section(title_s, p_body))
     return "".join(parts)
@@ -293,7 +294,7 @@ def build_monthly_report(data: dict, config: Config) -> ReportOutput:
             _forward_look(data, config),
         ]
         plain_text = "\n".join(sections)
-        chart_panel = _build_chart_panel(data, "")
+        chart_panel = _build_chart_panel(data, _dt.date.today().strftime("%Y-%m-%d"))
         html_body = chart_panel + _sections_to_html(sections)
         return ReportOutput(html_body=html_body, plain_text=plain_text)
     except Exception as e:
