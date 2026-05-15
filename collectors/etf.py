@@ -103,6 +103,32 @@ def _fetch_yfinance(symbol: str) -> dict:
 
 
 # ---------------------------------------------------------------------------
+# Collecte 7-day percentage change (via yfinance history)
+# ---------------------------------------------------------------------------
+
+def _fetch_1w_pct(symbol: str) -> float | None:
+    """
+    Calcule la variation pct_change_1w (7 jours) pour symbol via yfinance history.
+    Retourne None en cas d'erreur — l'appelant traite None comme donnée manquante.
+
+    Sécurité T-08-01 : hist["Close"] validé numérique via float() ; tout TypeError
+    tombe dans le except → None.
+    """
+    try:
+        hist = yf.Ticker(symbol).history(period="7d")
+        if hist.empty or len(hist) < 2:
+            return None
+        first_close = float(hist["Close"].iloc[0])
+        last_close = float(hist["Close"].iloc[-1])
+        if not first_close:
+            return None
+        return round((last_close - first_close) / first_close * 100, 4)
+    except Exception as e:
+        logger.warning("1w history fetch failed for %s: %s", symbol, e)
+        return None
+
+
+# ---------------------------------------------------------------------------
 # Collecte Alpha Vantage (supplément)
 # ---------------------------------------------------------------------------
 
@@ -184,6 +210,7 @@ def collect_etf(config: Config) -> dict:
             # --- 2. Collecte yfinance ---
             try:
                 data = _fetch_yfinance(symbol)
+                data["pct_change_1w"] = _fetch_1w_pct(symbol)
                 logger.info("yfinance OK pour %s : price=%.2f", symbol, data["price"])
 
                 # --- 3. Enrichissement Alpha Vantage (si clé présente, ticker OK, pas encore en échec) ---
