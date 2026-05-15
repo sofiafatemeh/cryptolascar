@@ -10,6 +10,10 @@ Couverture :
   Test 3 — Quota Alpha Vantage épuisé → alpha_vantage_failed=True
   Test 4 — Exception yfinance pour un ticker → partial=True
   Test 5 — collect_etf ne propage jamais d'exception
+  Test 6 — pct_change_1w présent avec valeur float quand yfinance retourne 7 jours d'historique
+  Test 7 — pct_change_1w est None quand yfinance history lève une exception
+  Test 8 — pct_change_1w est présent dans le cache aux côtés des autres champs
+  Test 9 — pct_change (1 jour) est toujours présent en même temps que pct_change_1w (non-régression)
 """
 from __future__ import annotations
 
@@ -205,3 +209,135 @@ def test_collect_etf_never_raises(tmp_config):
 
     assert isinstance(result, dict)
     assert "tickers" in result
+
+
+# ---------------------------------------------------------------------------
+# Test 6 — pct_change_1w présent avec valeur float quand 7j d'historique dispo
+# ---------------------------------------------------------------------------
+
+def test_pct_change_1w_present_when_history_available(tmp_config):
+    """collect_etf doit inclure pct_change_1w (float) quand yfinance retourne 7j d'historique."""
+    import pandas as pd
+
+    tmp_config.alpha_vantage_key = ""
+
+    mock_fast_info = MagicMock()
+    mock_fast_info.lastPrice = 550.0
+    mock_fast_info.previousClose = 540.0
+    mock_fast_info.regularMarketVolume = 2_000_000
+
+    # Simuler 7 jours d'historique
+    hist_data = pd.DataFrame({"Close": [500.0, 510.0, 520.0, 530.0, 540.0, 545.0, 550.0]})
+
+    mock_ticker = MagicMock()
+    mock_ticker.fast_info = mock_fast_info
+    mock_ticker.history.return_value = hist_data
+
+    with patch("collectors.etf.yf") as mock_yf:
+        mock_yf.Ticker.return_value = mock_ticker
+        result = collect_etf(tmp_config)
+
+    spy = result["tickers"]["SPY"]
+    assert "pct_change_1w" in spy
+    assert spy["pct_change_1w"] is not None
+    assert isinstance(spy["pct_change_1w"], float)
+    # (550.0 - 500.0) / 500.0 * 100 = 10.0
+    assert spy["pct_change_1w"] == pytest.approx(10.0, abs=0.01)
+
+
+# ---------------------------------------------------------------------------
+# Test 7 — pct_change_1w est None quand yfinance history lève une exception
+# ---------------------------------------------------------------------------
+
+def test_pct_change_1w_is_none_when_history_fails(tmp_config):
+    """pct_change_1w doit être None (pas KeyError) si yfinance history échoue."""
+    import pandas as pd
+
+    tmp_config.alpha_vantage_key = ""
+
+    mock_fast_info = MagicMock()
+    mock_fast_info.lastPrice = 550.0
+    mock_fast_info.previousClose = 540.0
+    mock_fast_info.regularMarketVolume = 2_000_000
+
+    mock_ticker_ok = MagicMock()
+    mock_ticker_ok.fast_info = mock_fast_info
+    mock_ticker_ok.history.side_effect = Exception("network error for 7d history")
+
+    with patch("collectors.etf.yf") as mock_yf:
+        mock_yf.Ticker.return_value = mock_ticker_ok
+        result = collect_etf(tmp_config)
+
+    spy = result["tickers"]["SPY"]
+    assert "pct_change_1w" in spy
+    assert spy["pct_change_1w"] is None
+
+
+# ---------------------------------------------------------------------------
+# Test 8 — pct_change_1w est mis en cache avec les autres champs
+# ---------------------------------------------------------------------------
+
+def test_pct_change_1w_stored_in_cache(tmp_config):
+    """pct_change_1w doit être persisté en cache SQLite avec le reste des données."""
+    import pandas as pd
+
+    tmp_config.alpha_vantage_key = ""
+
+    mock_fast_info = MagicMock()
+    mock_fast_info.lastPrice = 600.0
+    mock_fast_info.previousClose = 590.0
+    mock_fast_info.regularMarketVolume = 1_500_000
+
+    hist_data = pd.DataFrame({"Close": [560.0, 570.0, 580.0, 585.0, 590.0, 595.0, 600.0]})
+
+    mock_ticker = MagicMock()
+    mock_ticker.fast_info = mock_fast_info
+    mock_ticker.history.return_value = hist_data
+
+    with patch("collectors.etf.yf") as mock_yf:
+        mock_yf.Ticker.return_value = mock_ticker
+        collect_etf(tmp_config)
+
+    # Lire la ligne de cache et vérifier que pct_change_1w est présent
+    conn = get_connection(tmp_config.db_path)
+    row = conn.execute(
+        "SELECT data_json FROM market_cache WHERE source='yfinance_etf' AND symbol='SPY'"
+    ).fetchone()
+    conn.close()
+
+    assert row is not None
+    cached = json.loads(row["data_json"])
+    assert "pct_change_1w" in cached
+
+
+# ---------------------------------------------------------------------------
+# Test 9 — pct_change (1 jour) toujours présent avec pct_change_1w (non-régression)
+# ---------------------------------------------------------------------------
+
+def test_pct_change_1d_still_present_alongside_1w(tmp_config):
+    """pct_change (1 jour) doit rester présent quand pct_change_1w est ajouté."""
+    import pandas as pd
+
+    tmp_config.alpha_vantage_key = ""
+
+    mock_fast_info = MagicMock()
+    mock_fast_info.lastPrice = 550.0
+    mock_fast_info.previousClose = 540.0
+    mock_fast_info.regularMarketVolume = 2_000_000
+
+    hist_data = pd.DataFrame({"Close": [500.0, 510.0, 520.0, 530.0, 540.0, 545.0, 550.0]})
+
+    mock_ticker = MagicMock()
+    mock_ticker.fast_info = mock_fast_info
+    mock_ticker.history.return_value = hist_data
+
+    with patch("collectors.etf.yf") as mock_yf:
+        mock_yf.Ticker.return_value = mock_ticker
+        result = collect_etf(tmp_config)
+
+    spy = result["tickers"]["SPY"]
+    # Les deux champs doivent être présents
+    assert "pct_change" in spy
+    assert "pct_change_1w" in spy
+    assert spy["pct_change"] is not None
+    assert spy["pct_change_1w"] is not None
