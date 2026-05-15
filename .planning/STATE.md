@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Rapports Enrichis
-status: executing
-stopped_at: Completed 08-02 — reporter transform layer fixes (CHART-01/03/04)
-last_updated: "2026-05-15T12:00:00.000Z"
-last_activity: 2026-05-15 — Phase 8 Plan 02 executed (etf_chart_data + pea_list + fg_score None-safe in 3 reporters)
+status: phase_complete
+stopped_at: Phase 8 complete — all CHART-01/02/03/04/05 gaps closed, boundary tests, Phase 6 VERIFICATION.md
+last_updated: "2026-05-15T15:00:00.000Z"
+last_activity: 2026-05-15 — Phase 8 complete (boundary tests + 06-VERIFICATION.md, 321 tests pass, human UAT approved)
 progress:
   total_phases: 3
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 11
-  completed_plans: 7
-  percent: 64
+  completed_plans: 10
+  percent: 91
 ---
 
 # Project State
@@ -21,13 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-13)
 
 **Core value:** L'utilisateur reçoit chaque matin une analyse financière actionnable et sourcée couvrant ETFs, crypto et PEA — sans aucune action manuelle — directement dans sa boîte email.
-**Current focus:** Phase 8 — Close Gaps (ready to execute — 3 plans, Wave 1 starts with collector fixes)
+**Current focus:** Phase 8 complete — ready for Phase 9 planning (Milestone v1.1 final push)
 
 ## Current Position
 
-Phase: 8 — Close Gaps
-Plan: 08-01 DONE | 08-02 DONE | 08-03 ○
-Status: Executing — Wave 3 ready (Phase 6 VERIFICATION.md)
+Phase: 8 — Close Gaps — COMPLETE
+Plan: 08-01 DONE | 08-02 DONE | 08-03 DONE
+Status: Complete — verification passed (human_needed approved 2026-05-15)
 Last activity: 2026-05-15 — 08-02 complete: reporter transform layer (CHART-01/03/04)
 
 Progress: 1/3 phases complete | 8/11 plans complete (73%)

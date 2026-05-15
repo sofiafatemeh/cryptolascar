@@ -12,7 +12,7 @@ Two phases transform the system from plain-text emails into visually rich financ
 
 - [ ] **Phase 6: Chart Generation** - Matplotlib chart module producing ETF bar chart, crypto sparklines, Fear & Greed gauge, and PEA colored table — all embedded as PNG base64, with per-chart fallback on failure
 - [ ] **Phase 7: Template Redesign & Integration** - Dark mode Bloomberg-style HTML template (responsive, mobile-friendly) applied to all three report types (daily/weekly/monthly) with charts integrated
-- [ ] **Phase 8: Close Gaps** - Close gaps: CHART-01/02/04 data contracts + CHART-03 fallback fix + Phase 6 VERIFICATION.md (INSERTED)
+- [x] **Phase 8: Close Gaps** - Close gaps: CHART-01/02/04 data contracts + CHART-03 fallback fix + Phase 6 VERIFICATION.md (INSERTED) — 2026-05-15
 
 ## Phase Details
 
@@ -89,7 +89,7 @@ Plans:
 - [x] 08-02-PLAN.md — reporters/daily.py + weekly.py + monthly.py: ETF transform + PEA transform + CHART-03 fg_score fix
 
 **Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 08-03-PLAN.md — tests/test_chart_boundary.py boundary tests + 06-VERIFICATION.md
+- [x] 08-03-PLAN.md — tests/test_chart_boundary.py boundary tests + 06-VERIFICATION.md
 
 **Cross-cutting constraints:**
 - All chart data transforms happen in _build_chart_panel (all 3 reporters), not in collectors or generators
@@ -105,4 +105,4 @@ Phases execute in numeric order: 6 → 7 → 8
 |-------|----------------|--------|-----------|
 | 6. Chart Generation | 1/4 | In progress | - |
 | 7. Template Redesign & Integration | 3/4 | In progress | - |
-| 8. Close Gaps (INSERTED) | 1/3 | In progress | - |
+| 8. Close Gaps (INSERTED) | 3/3 | Complete | 2026-05-15 |
