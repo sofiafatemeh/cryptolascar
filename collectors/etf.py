@@ -147,6 +147,7 @@ def _fetch_alpha_vantage(symbol: str, api_key: str) -> dict | None:
             params={"function": "GLOBAL_QUOTE", "symbol": symbol, "apikey": api_key},
             timeout=10,
         )
+        resp.raise_for_status()
         data = resp.json()
         # Quota épuisé ou limite de fréquence — réponse avec "Note" ou "Information"
         if "Note" in data or "Information" in data:

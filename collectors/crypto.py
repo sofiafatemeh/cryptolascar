@@ -108,6 +108,7 @@ def _fetch_fear_greed(conn) -> dict | None:
         return cached
     try:
         resp = httpx.get(FNG_URL, timeout=10)
+        resp.raise_for_status()
         raw = resp.json()
         data = {
             "value": int(raw["data"][0]["value"]),
@@ -142,6 +143,7 @@ def _fetch_sparkline(conn, coin_id: str, config: Config) -> list[float]:
         if config.coingecko_api_key:
             params["x_cg_demo_api_key"] = config.coingecko_api_key
         resp = httpx.get(url, params=params, timeout=15)
+        resp.raise_for_status()
         data = resp.json()
         prices = [float(price) for _, price in data.get("prices", [])]
         time.sleep(CG_SLEEP_SECONDS)
@@ -195,6 +197,7 @@ def collect_crypto(config: Config) -> dict:
                 if config.coingecko_api_key:
                     params["x_cg_demo_api_key"] = config.coingecko_api_key
                 resp = httpx.get(CG_MARKETS_URL, params=params, timeout=15)
+                resp.raise_for_status()
                 items = resp.json()
                 time.sleep(CG_SLEEP_SECONDS)
                 for item in items:
