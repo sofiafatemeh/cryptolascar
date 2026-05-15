@@ -16,8 +16,20 @@ Threat model :
 """
 from __future__ import annotations
 
+import html as _html
+
 from config import Config
-from reporters.base import synthesize_section, build_section, format_pct, format_currency
+from reporters.base import (
+    synthesize_section, build_section, format_pct, format_currency,
+    ReportOutput, html_section,
+    ETF_FALLBACK, CRYPTO_FALLBACK, GAUGE_FALLBACK, PEA_FALLBACK,
+)
+from charts import (
+    generate_etf_chart,
+    generate_crypto_sparklines,
+    generate_fear_greed_gauge,
+    generate_pea_table,
+)
 from logging_setup import get_logger
 
 logger = get_logger(__name__)

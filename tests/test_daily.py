@@ -172,10 +172,15 @@ def test_build_daily_report_returns_string_with_six_sections(tmp_config, data_co
     Avec synthesize_section mocké, build_daily_report doit retourner une chaîne
     contenant exactement les 6 titres de section définis par REPT-01.
     """
-    with patch("reporters.daily.synthesize_section", return_value="NARRATION OK"):
-        report = build_daily_report(data_complete, tmp_config)
+    with patch("reporters.daily.synthesize_section", return_value="NARRATION OK"), \
+         patch("reporters.daily.generate_etf_chart", return_value=None), \
+         patch("reporters.daily.generate_crypto_sparklines", return_value=None), \
+         patch("reporters.daily.generate_fear_greed_gauge", return_value=None), \
+         patch("reporters.daily.generate_pea_table", return_value=None):
+        result = build_daily_report(data_complete, tmp_config)
 
-    assert isinstance(report, str), "build_daily_report doit retourner une chaîne"
+    report = result.plain_text
+    assert isinstance(report, str), "build_daily_report doit retourner un ReportOutput avec plain_text str"
 
     expected_sections = [
         "## Macro Snapshot",
@@ -210,9 +215,14 @@ def test_build_daily_report_word_count_in_target_range(tmp_config, data_complete
         "dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident"
     )
 
-    with patch("reporters.daily.synthesize_section", return_value=filler_50_words):
-        report = build_daily_report(data_complete, tmp_config)
+    with patch("reporters.daily.synthesize_section", return_value=filler_50_words), \
+         patch("reporters.daily.generate_etf_chart", return_value=None), \
+         patch("reporters.daily.generate_crypto_sparklines", return_value=None), \
+         patch("reporters.daily.generate_fear_greed_gauge", return_value=None), \
+         patch("reporters.daily.generate_pea_table", return_value=None):
+        result = build_daily_report(data_complete, tmp_config)
 
+    report = result.plain_text
     word_count = len(report.split())
     assert 250 <= word_count <= 400, (
         f"Compte de mots hors fourchette [250, 400] : {word_count} mots.\n"
@@ -283,10 +293,15 @@ def test_build_daily_report_graceful_when_synthesize_returns_fallback(tmp_config
     build_daily_report ne doit pas lever d'exception et doit retourner
     un rapport avec les 6 sections structurées.
     """
-    with patch("reporters.daily.synthesize_section", return_value=FALLBACK_TEMPLATE):
-        report = build_daily_report(data_complete, tmp_config)
+    with patch("reporters.daily.synthesize_section", return_value=FALLBACK_TEMPLATE), \
+         patch("reporters.daily.generate_etf_chart", return_value=None), \
+         patch("reporters.daily.generate_crypto_sparklines", return_value=None), \
+         patch("reporters.daily.generate_fear_greed_gauge", return_value=None), \
+         patch("reporters.daily.generate_pea_table", return_value=None):
+        result = build_daily_report(data_complete, tmp_config)
 
-    assert isinstance(report, str), "build_daily_report doit retourner une chaîne"
+    report = result.plain_text
+    assert isinstance(report, str), "plain_text doit être une chaîne"
 
     expected_sections = [
         "## Macro Snapshot",
@@ -316,9 +331,14 @@ def test_build_daily_report_handles_missing_subsections(tmp_config, data_complet
     """
     data_complete["macro"] = {"error": "FRED down", "source_failed": True}
 
-    with patch("reporters.daily.synthesize_section", return_value="NARRATION OK"):
-        report = build_daily_report(data_complete, tmp_config)
+    with patch("reporters.daily.synthesize_section", return_value="NARRATION OK"), \
+         patch("reporters.daily.generate_etf_chart", return_value=None), \
+         patch("reporters.daily.generate_crypto_sparklines", return_value=None), \
+         patch("reporters.daily.generate_fear_greed_gauge", return_value=None), \
+         patch("reporters.daily.generate_pea_table", return_value=None):
+        result = build_daily_report(data_complete, tmp_config)
 
+    report = result.plain_text
     assert "## Macro Snapshot" in report, (
         "La section Macro Snapshot doit être présente même si source_failed=True"
     )
@@ -348,8 +368,14 @@ def test_build_daily_report_includes_pea_alert_when_eligibility_changed(tmp_conf
     """
     data_complete["pea"]["eligibility_changed"] = True
 
-    with patch("reporters.daily.synthesize_section", return_value="NARRATION OK"):
-        report = build_daily_report(data_complete, tmp_config)
+    with patch("reporters.daily.synthesize_section", return_value="NARRATION OK"), \
+         patch("reporters.daily.generate_etf_chart", return_value=None), \
+         patch("reporters.daily.generate_crypto_sparklines", return_value=None), \
+         patch("reporters.daily.generate_fear_greed_gauge", return_value=None), \
+         patch("reporters.daily.generate_pea_table", return_value=None):
+        result = build_daily_report(data_complete, tmp_config)
+
+    report = result.plain_text
 
     assert "## PEA Alert" in report, "Section PEA Alert absente"
 
