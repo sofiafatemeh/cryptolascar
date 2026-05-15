@@ -4,16 +4,62 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ subject }}</title>
+  <style>
+    /* Section card headings — fallback for email clients that support <style> blocks */
+    h2 { color:#FF6B35; font-family:'Courier New',monospace; font-size:18px; font-weight:700; }
+    /* Mobile-only overrides — table-based inline CSS is the desktop baseline */
+    @media (max-width:600px) {
+      .header-brand { font-size:18px !important; display:block; text-align:center; }
+      .header-right { display:block; text-align:center; margin-top:8px; }
+      .header-inner { display:block !important; }
+      .chart-cell { display:block !important; width:100% !important; padding:4px 0 !important; }
+    }
+  </style>
 </head>
-<body style="margin:0;padding:0;background-color:#ffffff;font-family:Georgia,serif;color:#222222;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:680px;margin:0 auto;">
+<body style="margin:0;padding:0;background-color:#0d0d0d;font-family:'Courier New',monospace;color:#e0e0e0;">
+  <!-- Outer centering wrapper -->
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0d0d0d;">
     <tr>
-      <td style="padding:32px 24px;">
-        {{ body_html | safe }}
-        <hr style="border:none;border-top:1px solid #dddddd;margin:32px 0;">
-        <p style="font-size:11px;color:#888888;font-style:italic;">
-          Ceci n'est pas un conseil financier. Informations à titre éducatif uniquement.
-        </p>
+      <td align="center" style="padding:32px 24px;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:680px;margin:0 auto;">
+
+          <!-- HEADER BAND -->
+          <tr>
+            <td style="background-color:#111111;padding:24px 24px;border-bottom:1px solid #2a2a2a;">
+              <table width="100%" cellpadding="0" cellspacing="0" class="header-inner">
+                <tr>
+                  <td style="vertical-align:middle;">
+                    <span class="header-brand" style="font-family:'Courier New',monospace;font-size:22px;font-weight:700;color:#FF6B35;line-height:1.2;">CryptoLascar</span>
+                  </td>
+                  <td style="vertical-align:middle;text-align:right;" class="header-right">
+                    <span style="font-family:'Courier New',monospace;font-size:14px;font-weight:700;color:#FF6B35;line-height:1.2;display:block;">
+                      {% if report_type == 'daily' %}[DAILY]{% elif report_type == 'weekly' %}[WEEKLY WRAP]{% elif report_type == 'monthly' %}[MONTHLY CLOSE]{% else %}[REPORT]{% endif %}
+                    </span>
+                    <span style="font-family:'Courier New',monospace;font-size:12px;font-weight:400;color:#e0e0e0;line-height:1.2;display:block;margin-top:4px;">{{ date }}</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- BODY: chart panel + narrative sections (pre-built by reporter into html_body) -->
+          <tr>
+            <td style="padding:16px 0;">
+              {{ body_html | safe }}
+            </td>
+          </tr>
+
+          <!-- FOOTER -->
+          <tr>
+            <td style="padding:0 0 32px 0;">
+              <hr style="border:none;border-top:1px solid #2a2a2a;margin:24px 0;">
+              <p style="font-size:12px;color:#555555;font-family:'Courier New',monospace;font-style:italic;margin:0;">
+                Ceci n'est pas un conseil financier. Informations à titre éducatif uniquement.
+              </p>
+            </td>
+          </tr>
+
+        </table>
       </td>
     </tr>
   </table>
