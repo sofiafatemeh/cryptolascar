@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    background-color: #0D0D0D;
+  }
+
+  /* Prose styles for markdown report content */
+  .report-prose h2 {
+    @apply text-or-lascar font-display uppercase tracking-widest text-sm mb-3 border-b border-or-sale/20 pb-2;
+  }
+  .report-prose h3 {
+    @apply text-blanc-linen/70 text-xs uppercase tracking-wider mt-4 mb-2;
+  }
+  .report-prose p {
+    @apply text-blanc-linen/80 text-sm leading-relaxed mb-3;
+  }
+  .report-prose strong {
+    @apply text-blanc-linen font-semibold;
+  }
+  .report-prose em {
+    @apply text-blanc-linen/60 italic;
+  }
+  .report-prose blockquote {
+    @apply border-l-2 border-or-sale/40 pl-3 text-blanc-linen/50 text-xs italic my-3;
+  }
+  .report-prose ul {
+    @apply space-y-1 my-2;
+  }
+  .report-prose li {
+    @apply text-sm text-blanc-linen/70 flex gap-2 before:content-['▸'] before:text-or-lascar/60 before:text-xs before:mt-0.5;
+  }
+  .report-prose table {
+    @apply w-full text-xs border-collapse my-3;
+  }
+  .report-prose th {
+    @apply text-left text-or-lascar/70 uppercase tracking-wider border-b border-or-sale/30 pb-1 pr-4;
+  }
+  .report-prose td {
+    @apply py-1 pr-4 text-blanc-linen/70 border-b border-or-sale/10;
+  }
+}
