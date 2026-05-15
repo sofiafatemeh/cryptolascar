@@ -54,7 +54,7 @@ MOCK_ETF_EXTENDED = {
         "SPY": {"price": 500.0, "prev_close": 495.0, "pct_change": 1.01, "volume": 1_000_000},
         "QQQ": {"price": 420.0, "prev_close": 415.0, "pct_change": 1.20, "volume": 800_000},
         "IWDA.AS": {"price": 90.0, "prev_close": 89.0, "pct_change": 1.12, "volume": 50_000},
-        "EIMI.AS": {"price": 35.0, "prev_close": 34.5, "pct_change": 1.45, "volume": 20_000},
+        "EIMI.L": {"price": 35.0, "prev_close": 34.5, "pct_change": 1.45, "volume": 20_000},
         "CSPX.AS": {"price": 55.0, "prev_close": 54.0, "pct_change": 1.85, "volume": 30_000},
     },
     "alpha_vantage_failed": False,
@@ -248,7 +248,7 @@ def test_build_weekly_report_etf_table_lists_all_tickers(tmp_config):
         result = build_weekly_report(data, tmp_config)
 
     report = result.plain_text
-    expected_tickers = ["SPY", "QQQ", "IWDA.AS", "EIMI.AS", "CSPX.AS"]
+    expected_tickers = ["SPY", "QQQ", "IWDA.AS", "EIMI.L", "CSPX.AS"]
     for ticker in expected_tickers:
         assert ticker in report, f"Ticker {ticker} absent du rapport ETF"
 

@@ -3,7 +3,7 @@ collectors/etf.py — Collecte des prix ETF avec cache SQLite et fallback Alpha 
 
 Fonctionnalité principale :
   collect_etf(config: Config) -> dict
-    - Collecte SPY, QQQ, IWDA.AS, EIMI.AS, CSPX.AS via yfinance (source primaire)
+    - Collecte SPY, QQQ, IWDA.AS, EIMI.L, CSPX.AS via yfinance (source primaire)
     - Cache SQLite 4h : un deuxième appel dans la fenêtre ne touche pas yfinance
     - Alpha Vantage GLOBAL_QUOTE en supplément si config.alpha_vantage_key défini
     - Dégradation gracieuse : ne lève jamais d'exception non gérée
@@ -29,7 +29,7 @@ from logging_setup import get_logger
 
 logger = get_logger(__name__)
 
-ETF_TICKERS = ["SPY", "QQQ", "IWDA.AS", "EIMI.AS", "CSPX.AS"]
+ETF_TICKERS = ["SPY", "QQQ", "IWDA.AS", "EIMI.L", "CSPX.AS"]
 CACHE_SOURCE = "yfinance_etf"
 CACHE_TTL_HOURS = 4
 AV_SLEEP_SECONDS = 0.5
@@ -169,7 +169,7 @@ def _fetch_alpha_vantage(symbol: str, api_key: str) -> dict | None:
 
 def collect_etf(config: Config) -> dict:
     """
-    Collecte les prix ETF pour SPY, QQQ, IWDA.AS, EIMI.AS, CSPX.AS.
+    Collecte les prix ETF pour SPY, QQQ, IWDA.AS, EIMI.L, CSPX.AS.
 
     Comportement :
     - Vérifie le cache SQLite (TTL 4h) avant tout appel réseau
