@@ -13,7 +13,8 @@ const config: Config = {
         'or-sale': '#B8860B',
       },
       fontFamily: {
-        display: ['Impact', 'Arial Narrow', 'sans-serif'],
+        display: ['var(--font-anton)', 'Impact', 'Arial Narrow', 'sans-serif'],
+        brush: ['var(--font-brush)', 'cursive'],
         body: ['Inter', 'system-ui', 'sans-serif'],
       },
     },

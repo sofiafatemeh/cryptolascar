@@ -7,6 +7,33 @@
     background-color: #0D0D0D;
   }
 
+  /* Grain texture for cards */
+  .card-grain {
+    position: relative;
+  }
+  .card-grain::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  /* X motif decoration */
+  .x-motif::after {
+    content: '✕';
+    position: absolute;
+    color: #F2EFE6;
+    opacity: 0.04;
+    font-size: 8rem;
+    font-weight: 900;
+    line-height: 1;
+    pointer-events: none;
+  }
+
   /* Prose styles for markdown report content */
   .report-prose h2 {
     @apply text-or-lascar font-display uppercase tracking-widest text-sm mb-3 border-b border-or-sale/20 pb-2;
@@ -40,5 +67,13 @@
   }
   .report-prose td {
     @apply py-1 pr-4 text-blanc-linen/70 border-b border-or-sale/10;
+  }
+
+  /* Positive / negative financial values */
+  .val-positive {
+    @apply text-vert-marche;
+  }
+  .val-negative {
+    color: #E53E3E;
   }
 }
