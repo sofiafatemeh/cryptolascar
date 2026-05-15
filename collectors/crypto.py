@@ -146,9 +146,9 @@ def _fetch_sparkline(conn, coin_id: str, config: Config) -> list[float]:
         resp.raise_for_status()
         data = resp.json()
         prices = [float(price) for _, price in data.get("prices", [])]
-        time.sleep(CG_SLEEP_SECONDS)
-        _upsert_cache(conn, SPARKLINE_SOURCE, coin_id, {"prices": prices})
+        _upsert_cache(conn, SPARKLINE_SOURCE, coin_id, {"prices": prices})  # WR-03: cache before sleep
         logger.info("Sparkline %s: %d points", coin_id, len(prices))
+        time.sleep(CG_SLEEP_SECONDS)  # rate-limit courtesy — last before return
         return prices
     except Exception as exc:
         logger.error("Sparkline fetch failed for %s: %s", coin_id, exc)
