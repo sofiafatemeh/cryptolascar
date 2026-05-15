@@ -143,6 +143,7 @@ def send_email(
     config: Config,
     month: str = "",
     year: str = "",
+    html_body: str = "",
 ) -> None:
     """Envoie le rapport par email HTML via Gmail SMTP (D-04, REPT-05).
 
@@ -159,14 +160,22 @@ def send_email(
     """
     subject = build_subject(report_type, date, month=month, year=year)
 
-    # Conversion Markdown -> HTML pour le corps du template (contenu HTML-échappé)
-    body_html = _markdown_to_html(plain_text)
+    # D-03: use reporter-generated html_body when provided; bypass _markdown_to_html for rich output
+    if html_body:
+        body_html = html_body
+    else:
+        body_html = _markdown_to_html(plain_text)
 
     # Rendu Jinja2 avec autoescape activé (CR-01, WR-01)
     # body_html est pré-construit et de confiance → | safe dans le template
-    # subject est auto-échappé par autoescape=True
+    # subject, report_type, date sont auto-échappés par autoescape=True
     template = _JINJA_ENV.get_template("report_email.html")
-    html_content = template.render(subject=subject, body_html=body_html)
+    html_content = template.render(
+        subject=subject,
+        body_html=body_html,
+        report_type=report_type,
+        date=date,
+    )
 
     # Construction du message MIME multipart/alternative (REPT-05, D-03)
     msg = MIMEMultipart("alternative")
