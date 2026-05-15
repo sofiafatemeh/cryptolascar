@@ -36,6 +36,21 @@ from logging_setup import get_logger
 
 logger = get_logger(__name__)
 
+_PEA_NAMES = {
+    "^FCHI":    "CAC 40",
+    "^SBF120":  "SBF 120",
+    "CW8.PA":   "Amundi MSCI World",
+    "PAEEM.PA": "Amundi MSCI EM",
+    "PANX.PA":  "Amundi Nasdaq-100",
+}
+_PEA_ELIGIBILITY = {
+    "CW8.PA":   True,
+    "PAEEM.PA": True,
+    "PANX.PA":  True,
+    "^FCHI":    None,
+    "^SBF120":  None,
+}
+
 DAILY_SYSTEM_PROMPT = (
     "Tu es un analyste financier français. Réponds en français, ton sobre et factuel, "
     "synthèse d'environ 50 mots par section. Pas de conseil financier explicite."
@@ -90,7 +105,7 @@ def _crypto_section(data: dict, config: Config) -> str:
     if crypto.get("source_failed"):
         return build_section("Crypto Pulse", "Données crypto indisponibles ce matin.")
     coins = crypto.get("coins", {})
-    fg = crypto.get("fear_greed", {})
+    fg = crypto.get("fear_greed") or {}
     facts = []
     for cid, c in coins.items():
         if c.get("price") is not None and c.get("pct_change_24h") is not None:
@@ -175,13 +190,23 @@ def _one_signal_section(data: dict, config: Config) -> str:
 
 def _build_chart_panel(data: dict, date_str: str) -> str:
     """Build 2x2 chart panel HTML (D-11 / UI-SPEC §Chart Panel). Never raises."""
-    etf_data = data.get("etf") or {}
     crypto_data = data.get("crypto") or {}
-    pea_data = data.get("pea") or {}
-    fg_score = (data.get("crypto") or {}).get("fear_greed", {}).get("value")
+    # CHART-03: coerce None fear_greed to {} before .get("value") to avoid AttributeError
+    fg_score = ((data.get("crypto") or {}).get("fear_greed") or {}).get("value")
+
+    # CHART-01: transform collector ETF dict to {ticker: {"1d": float, "1w": float}}
+    etf_raw = data.get("etf") or {}
+    etf_chart_data = {
+        sym: {
+            "1d": t.get("pct_change") or 0.0,
+            "1w": t.get("pct_change_1w") or 0.0,
+        }
+        for sym, t in (etf_raw.get("tickers") or {}).items()
+        if t.get("pct_change") is not None
+    }
 
     try:
-        etf_b64 = generate_etf_chart(etf_data, date_str)
+        etf_b64 = generate_etf_chart(etf_chart_data, date_str)
     except Exception:
         etf_b64 = None
     etf_cell = (
@@ -212,8 +237,23 @@ def _build_chart_panel(data: dict, date_str: str) -> str:
         if gauge_b64 else GAUGE_FALLBACK
     )
 
+    # CHART-04: transform collector PEA dict to list[dict] with standard keys
+    pea_raw = data.get("pea") or {}
+    pea_list = [
+        {
+            "ticker":       sym,
+            "name":         _PEA_NAMES.get(sym, sym),
+            "price":        t.get("price"),
+            "change_1d":    t.get("pct_change"),
+            "change_1w":    t.get("pct_change_1w"),
+            "pea_eligible": _PEA_ELIGIBILITY.get(sym),
+        }
+        for sym, t in (pea_raw.get("prices") or {}).items()
+        if t.get("price") is not None
+    ]
+
     try:
-        pea_html = generate_pea_table(pea_data)
+        pea_html = generate_pea_table(pea_list)
     except Exception:
         pea_html = None
     pea_cell = pea_html if pea_html else PEA_FALLBACK
