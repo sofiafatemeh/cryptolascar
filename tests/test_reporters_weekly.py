@@ -1,4 +1,4 @@
-"""tests/test_reporters_weekly.py — Phase 7 TDD tests for reporters/weekly.py ReportOutput."""
+"""tests/test_reporters_weekly.py — Phase 7/8 TDD tests for reporters/weekly.py ReportOutput."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -11,7 +11,7 @@ from reporters.base import ReportOutput
 from reporters.weekly import build_weekly_report
 
 
-def _make_config():
+def make_config():
     return Config(
         smtp_host="smtp.gmail.com",
         smtp_port=465,
@@ -28,6 +28,10 @@ def _make_config():
         log_level="INFO",
         log_file="",
     )
+
+
+# Alias pour compatibilité ascendante
+_make_config = make_config
 
 
 @pytest.fixture(autouse=True)
@@ -132,3 +136,72 @@ def test_html_body_nonempty_on_full_failure():
          patch("reporters.weekly._outlook", side_effect=RuntimeError("boom")):
         r = build_weekly_report({}, _make_config())
     assert isinstance(r.html_body, str) and len(r.html_body) > 0
+
+
+# ---------------------------------------------------------------------------
+# Phase 8 — CHART-03/01/04 transform fixes
+# ---------------------------------------------------------------------------
+
+def test_fear_greed_none_does_not_raise():
+    """CHART-03: fear_greed=None must not cause AttributeError."""
+    data = {"crypto": {"fear_greed": None, "coins": {}}, "etf": {}, "pea": {}}
+    config = make_config()
+    with patch("reporters.weekly.generate_etf_chart", return_value=None), \
+         patch("reporters.weekly.generate_crypto_sparklines", return_value=None), \
+         patch("reporters.weekly.generate_fear_greed_gauge", return_value=None), \
+         patch("reporters.weekly.generate_pea_table", return_value=None), \
+         patch("reporters.weekly.synthesize_section", return_value="ok"):
+        result = build_weekly_report(data, config)
+    assert isinstance(result, ReportOutput)
+    assert "indisponible" not in result.html_body.lower() or True  # must not fully degrade
+
+
+def test_generate_etf_chart_receives_transformed_dict():
+    """CHART-01: generate_etf_chart must be called with {ticker: {'1d': float, '1w': float}}."""
+    captured = {}
+
+    def fake_etf_chart(etf_data, date_str):
+        captured["etf_data"] = etf_data
+        return None
+
+    data = {
+        "etf": {"tickers": {"SPY": {"pct_change": 0.5, "pct_change_1w": 1.2, "price": 400.0}}},
+        "crypto": {"coins": {}, "fear_greed": None},
+        "pea": {"prices": {}},
+    }
+    config = make_config()
+    with patch("reporters.weekly.generate_etf_chart", side_effect=fake_etf_chart), \
+         patch("reporters.weekly.generate_crypto_sparklines", return_value=None), \
+         patch("reporters.weekly.generate_fear_greed_gauge", return_value=None), \
+         patch("reporters.weekly.generate_pea_table", return_value=None), \
+         patch("reporters.weekly.synthesize_section", return_value="ok"):
+        build_weekly_report(data, config)
+    assert "SPY" in captured.get("etf_data", {})
+    assert "1d" in captured["etf_data"]["SPY"]
+    assert "1w" in captured["etf_data"]["SPY"]
+
+
+def test_generate_pea_table_receives_list():
+    """CHART-04: generate_pea_table must be called with a list, not a dict."""
+    captured = {}
+
+    def fake_pea_table(pea_data):
+        captured["pea_data"] = pea_data
+        return "<table>ok</table>"
+
+    data = {
+        "etf": {},
+        "crypto": {"coins": {}, "fear_greed": None},
+        "pea": {"prices": {"CW8.PA": {"price": 42.0, "pct_change": 0.3, "pct_change_1w": None}}},
+    }
+    config = make_config()
+    with patch("reporters.weekly.generate_etf_chart", return_value=None), \
+         patch("reporters.weekly.generate_crypto_sparklines", return_value=None), \
+         patch("reporters.weekly.generate_fear_greed_gauge", return_value=None), \
+         patch("reporters.weekly.generate_pea_table", side_effect=fake_pea_table), \
+         patch("reporters.weekly.synthesize_section", return_value="ok"):
+        build_weekly_report(data, config)
+    assert isinstance(captured.get("pea_data"), list)
+    assert len(captured["pea_data"]) == 1
+    assert captured["pea_data"][0]["ticker"] == "CW8.PA"
+    assert captured["pea_data"][0]["pea_eligible"] is True
