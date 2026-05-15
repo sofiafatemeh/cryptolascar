@@ -215,9 +215,9 @@ def collect_pea(config: Config) -> dict:
 
             try:
                 info = yf.Ticker(ticker).fast_info
-                price = float(info.lastPrice)
-                prev = float(info.previousClose)
-                vol = int(info.regularMarketVolume) if info.regularMarketVolume else 0
+                price = float(info.last_price)
+                prev = float(info.previous_close)
+                vol = int(info.last_volume) if info.last_volume else 0
                 pct = (price - prev) / prev * 100 if prev else 0.0
                 data = {
                     "price": price,
