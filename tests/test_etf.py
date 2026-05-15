@@ -86,7 +86,7 @@ def test_cache_hit_skips_yfinance(tmp_config):
     Un ticker en cache valide doit être retourné sans appel yfinance POUR CE TICKER.
     On met tous les tickers en cache afin de vérifier qu'aucun appel yfinance n'est émis.
     """
-    cached_data = {"price": 500.0, "prev_close": 495.0, "pct_change": 1.01, "volume": 1_000_000}
+    cached_data = {"price": 500.0, "prev_close": 495.0, "pct_change": 1.01, "volume": 1_000_000, "pct_change_1w": 2.5}
     # Pré-remplir le cache pour TOUS les tickers ETF
     from collectors.etf import ETF_TICKERS
     for ticker in ETF_TICKERS:
