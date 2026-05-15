@@ -226,7 +226,7 @@ def main(argv: list[str] | None = None) -> int:
                 year_str = str(today.year)
 
             archive_report(report_type, date_str, report_text.plain_text)
-            push_report(report_type, today, content_md=report_text.plain_text)
+            push_report(report_type, today, content_md=report_text.plain_text, content_html=report_text.html_body)
             send_email(
                 report_type, date_str, report_text.plain_text, config,
                 month=month_fr, year=year_str,

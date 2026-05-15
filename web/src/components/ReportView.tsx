@@ -1,5 +1,30 @@
 import type { Report } from '@/lib/blob'
 
+interface ChartImage {
+  src: string
+  alt: string
+}
+
+function extractCharts(html: string): ChartImage[] {
+  const matches = [...html.matchAll(/<img[^>]*src="(data:image\/png;base64,[^"]+)"[^>]*alt="([^"]+)"/g)]
+  return matches.map(m => ({ src: m[1], alt: m[2].replace(/&amp;/g, '&') }))
+}
+
+function ChartGrid({ contentHtml }: { contentHtml?: string }) {
+  if (!contentHtml) return null
+  const charts = extractCharts(contentHtml)
+  if (!charts.length) return null
+  return (
+    <div className="grid grid-cols-2 gap-3 mb-6">
+      {charts.map(({ src, alt }, i) => (
+        <div key={i} className="bg-anthracite border border-or-sale/15 rounded-lg p-3 overflow-hidden">
+          <img src={src} alt={alt} className="w-full h-auto block" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
 interface Section {
   title: string
   body: string
@@ -87,32 +112,35 @@ export default function ReportView({ report }: { report: Report }) {
   const sections = parseMarkdownSections(report.content_md)
 
   return (
-    <div className="space-y-3">
-      {sections.map((section, i) => (
-        <div
-          key={i}
-          className="relative bg-anthracite border border-or-sale/15 rounded-lg p-5 hover:border-or-sale/35 transition-colors overflow-hidden card-grain"
-        >
-          {/* Subtle X watermark on first card */}
-          {i === 0 && (
-            <span className="absolute -right-4 -bottom-6 text-blanc-linen/[0.03] font-display select-none pointer-events-none" style={{ fontSize: '7rem', lineHeight: 1 }}>✕</span>
-          )}
-
-          <div className="relative z-10">
-            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-or-sale/15">
-              <span className="text-or-lascar/70 text-sm">{sectionIcon(section.title)}</span>
-              <h2 className="font-display text-sm uppercase tracking-[0.2em] text-or-lascar">
-                {section.title}
-              </h2>
-            </div>
-            {section.body ? (
-              <MarkdownBody text={section.body} />
-            ) : (
-              <p className="text-xs text-blanc-linen/25 italic">Aucune donnée disponible.</p>
+    <div>
+      <ChartGrid contentHtml={report.content_html} />
+      <div className="space-y-3">
+        {sections.map((section, i) => (
+          <div
+            key={i}
+            className="relative bg-anthracite border border-or-sale/15 rounded-lg p-5 hover:border-or-sale/35 transition-colors overflow-hidden card-grain"
+          >
+            {/* Subtle X watermark on first card */}
+            {i === 0 && (
+              <span className="absolute -right-4 -bottom-6 text-blanc-linen/[0.03] font-display select-none pointer-events-none" style={{ fontSize: '7rem', lineHeight: 1 }}>✕</span>
             )}
+
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-4 pb-3 border-b border-or-sale/15">
+                <span className="text-or-lascar/70 text-sm">{sectionIcon(section.title)}</span>
+                <h2 className="font-display text-sm uppercase tracking-[0.2em] text-or-lascar">
+                  {section.title}
+                </h2>
+              </div>
+              {section.body ? (
+                <MarkdownBody text={section.body} />
+              ) : (
+                <p className="text-xs text-blanc-linen/25 italic">Aucune donnée disponible.</p>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   )
 }
