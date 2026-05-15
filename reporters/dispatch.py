@@ -26,6 +26,7 @@ import datetime as _dt
 from typing import Dict
 
 from config import Config
+from reporters.base import ReportOutput
 from reporters.daily import build_daily_report
 from reporters.weekly import build_weekly_report
 from reporters.monthly import build_monthly_report
@@ -61,28 +62,33 @@ def is_sunday(today: _dt.date) -> bool:
     return today.weekday() == 6
 
 
-def _safe_build(builder, name: str, data: dict, config: Config) -> str:
+def _safe_build(builder, name: str, data: dict, config: Config) -> ReportOutput:
     """
     Wrapper qui ne lève jamais — encapsule l'échec d'un builder (T-03-12).
 
     Args:
-        builder: callable (data, config) -> str
+        builder: callable (data, config) -> ReportOutput
         name: nom du rapport (pour le log)
         data: dict de données
         config: Config
 
     Returns:
-        Le rapport construit, ou un message d'indisponibilité si le builder lève.
+        Le rapport construit, ou un ReportOutput dégradé si le builder lève.
     """
     try:
         return builder(data, config)
     except Exception as e:
         # T-03-13 : on logue uniquement le nom du rapport et le message, JAMAIS la config
         logger.error("%s build failed: %s", name, e)
-        return f"[{name} indisponible — erreur lors de la construction du rapport.]"
+        fallback_text = f"[{name} indisponible — erreur lors de la construction du rapport.]"
+        fallback_html = (
+            f'<p style="color:#e0e0e0;font-family:\'Courier New\',monospace;'
+            f'font-size:14px;line-height:1.6;">{fallback_text}</p>'
+        )
+        return ReportOutput(html_body=fallback_html, plain_text=fallback_text)
 
 
-def select_reports(today: _dt.date, data: dict, config: Config) -> Dict[str, str]:
+def select_reports(today: _dt.date, data: dict, config: Config) -> Dict[str, ReportOutput]:
     """
     Retourne un dict des rapports à émettre pour la date `today`.
 
@@ -106,7 +112,7 @@ def select_reports(today: _dt.date, data: dict, config: Config) -> Dict[str, str
     """
     last = is_last_day_of_month(today)
     sunday = is_sunday(today)
-    result: Dict[str, str] = {}
+    result: Dict[str, ReportOutput] = {}
 
     if last and sunday:
         # REPT-04 — les DEUX rapports sont produits dans le même run

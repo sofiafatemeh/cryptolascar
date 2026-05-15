@@ -224,10 +224,13 @@ def main(argv: list[str] | None = None) -> int:
                 month_fr = today.strftime("%B")
                 year_str = str(today.year)
 
-            archive_report(report_type, date_str, report_text)
-            send_email(report_type, date_str, report_text, config,
-                       month=month_fr, year=year_str)
-            write_tweet(report_type, date_str, report_text, config)
+            archive_report(report_type, date_str, report_text.plain_text)
+            send_email(
+                report_type, date_str, report_text.plain_text, config,
+                month=month_fr, year=year_str,
+                html_body=report_text.html_body,
+            )
+            write_tweet(report_type, date_str, report_text.plain_text, config)
             logger.info("Pipeline complété pour report_type=%s date=%s", report_type, date_str)
 
         # Mise à jour du run_log avec le statut final (D-11)
