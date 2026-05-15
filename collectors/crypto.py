@@ -45,6 +45,9 @@ CACHE_TTL_HOURS = 1
 CG_SLEEP_SECONDS = 1.5
 CG_MARKETS_URL = "https://api.coingecko.com/api/v3/coins/markets"
 FNG_URL = "https://api.alternative.me/fng/?limit=1"
+CG_MARKET_CHART_URL = "https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart"
+SPARKLINE_SOURCE = "coingecko_sparkline"
+SPARKLINE_COINS = ["bitcoin", "ethereum"]
 
 
 def _utcnow_iso() -> str:
@@ -118,6 +121,38 @@ def _fetch_fear_greed(conn) -> dict | None:
         return None
 
 
+def _fetch_sparkline(conn, coin_id: str, config: Config) -> list[float]:
+    """
+    Récupère l'historique des prix sur 7 jours pour coin_id via CoinGecko market_chart.
+    Vérifie d'abord le cache (source='coingecko_sparkline', TTL 1h).
+    Retourne une liste de floats ou [] en cas d'échec.
+
+    Sécurité T-08-02 : timeout=15, exception capturée → [] retourné.
+    Sécurité T-08-03 : coingecko_api_key transmis en query param uniquement, jamais loggué.
+    Sécurité T-08-04 : float() cast dans la list comprehension ; ValueError capturé par le except.
+    """
+    cached = _get_cached(conn, SPARKLINE_SOURCE, coin_id)
+    if cached:
+        logger.debug("Cache hit pour sparkline %s", coin_id)
+        return cached.get("prices", [])
+
+    try:
+        url = CG_MARKET_CHART_URL.format(coin_id=coin_id)
+        params: dict = {"vs_currency": "usd", "days": "7", "interval": "daily"}
+        if config.coingecko_api_key:
+            params["x_cg_demo_api_key"] = config.coingecko_api_key
+        resp = httpx.get(url, params=params, timeout=15)
+        data = resp.json()
+        prices = [float(price) for _, price in data.get("prices", [])]
+        time.sleep(CG_SLEEP_SECONDS)
+        _upsert_cache(conn, SPARKLINE_SOURCE, coin_id, {"prices": prices})
+        logger.info("Sparkline %s: %d points", coin_id, len(prices))
+        return prices
+    except Exception as exc:
+        logger.error("Sparkline fetch failed for %s: %s", coin_id, exc)
+        return []
+
+
 def collect_crypto(config: Config) -> dict:
     """Collecte les prix pour 8 coins crypto + l'indice Fear & Greed.
 
@@ -181,6 +216,12 @@ def collect_crypto(config: Config) -> dict:
             except Exception as exc:
                 logger.error("CoinGecko fetch failed: %s", exc)
                 cg_failed = True
+
+        # Enrichissement sparkline pour bitcoin et ethereum (indépendant du résultat batch)
+        if not cg_failed:
+            for coin_id in SPARKLINE_COINS:
+                if coin_id in coins_data:
+                    coins_data[coin_id]["history"] = _fetch_sparkline(conn, coin_id, config)
 
         # Fear & Greed (indépendant de CoinGecko)
         fg_data = _fetch_fear_greed(conn)

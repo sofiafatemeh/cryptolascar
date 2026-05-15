@@ -146,10 +146,10 @@ def _insert_cache_row(
 
 def test_cache_hit_skips_coingecko(tmp_config):
     """
-    Si toutes les données crypto sont en cache valide, httpx.get ne doit pas
-    être appelé. On pré-insère bitcoin + Fear & Greed pour couvrir les deux sources.
+    Si toutes les données crypto sont en cache valide (coins + sparklines + Fear & Greed),
+    httpx.get ne doit pas être appelé.
     """
-    from collectors.crypto import CRYPTO_IDS
+    from collectors.crypto import CRYPTO_IDS, SPARKLINE_COINS
 
     # Pré-remplir le cache pour TOUS les coins
     for coin_id in CRYPTO_IDS:
@@ -165,6 +165,16 @@ def test_cache_hit_skips_coingecko(tmp_config):
                 "pct_change_24h": 1.0,
                 "symbol": coin_id[:3].upper(),
             },
+            expires_in_hours=5.0,
+        )
+
+    # Pré-remplir les sparklines pour bitcoin et ethereum
+    for coin_id in SPARKLINE_COINS:
+        _insert_cache_row(
+            tmp_config.db_path,
+            source="coingecko_sparkline",
+            symbol=coin_id,
+            data={"prices": [58000.0, 59000.0, 60000.0, 61000.0, 62000.0, 61500.0, 60000.0]},
             expires_in_hours=5.0,
         )
 
