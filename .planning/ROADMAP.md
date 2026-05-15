@@ -1,108 +1,59 @@
-# Roadmap: CryptoLascar — Milestone v1.1 Rapports Enrichis
+# Roadmap: CryptoLascar
 
-## Overview
+## Milestones
 
-Two phases transform the system from plain-text emails into visually rich financial reports. Phase 6 builds the chart generation module (matplotlib PNG charts embedded as base64, with graceful fallback when any chart fails). Phase 7 redesigns the HTML email templates with a dark-mode Bloomberg aesthetic, mobile responsiveness, and wires all three report types to the new visual system.
+- ✅ **v1.0 Core Pipeline** — Phases 1–5 (shipped 2026-05-13)
+- ✅ **v1.1 Rapports Enrichis** — Phases 6–8 (shipped 2026-05-15)
+- 📋 **v1.2** — Phases 9+ (planning next)
 
 ## Phases
 
-**Phase Numbering:**
-- Phases 1–5 completed in Milestone v1.0
-- Milestone v1.1 continues from Phase 6
+<details>
+<summary>✅ v1.0 Core Pipeline (Phases 1–5) — SHIPPED 2026-05-13</summary>
 
-- [x] **Phase 6: Chart Generation** - Matplotlib chart module producing ETF bar chart, crypto sparklines, Fear & Greed gauge, and PEA colored table — all embedded as PNG base64, with per-chart fallback on failure — 2026-05-15
-- [x] **Phase 7: Template Redesign & Integration** - Dark mode Bloomberg-style HTML template (responsive, mobile-friendly) applied to all three report types (daily/weekly/monthly) with charts integrated — 2026-05-15
-- [x] **Phase 8: Close Gaps** - Close gaps: CHART-01/02/04 data contracts + CHART-03 fallback fix + Phase 6 VERIFICATION.md (INSERTED) — 2026-05-15
+- [x] **Phase 1: Foundation** (3/3 plans) — SQLite cache, .env config, logging structuré — completed 2026-05-09
+- [x] **Phase 2: Data Pipeline** (6/6 plans) — ETF, crypto, PEA, macro, news collectors — completed 2026-05-11
+- [x] **Phase 3: Report Generation** (4/4 plans) — daily/weekly/monthly + Claude synthesis — completed 2026-05-12
+- [x] **Phase 4: Delivery & Side Outputs** (2/2 plans) — Gmail SMTP, tweet files, Markdown archive — completed 2026-05-12
+- [x] **Phase 5: Scheduling & Resilience** (2/2 plans) — cron installé, smoke test, graceful degradation — completed 2026-05-13
 
-## Phase Details
+*17 plans total | 121 tests | Archive: [milestones/v1.0-ROADMAP.md](milestones/)*
 
-### Phase 6: Chart Generation
-**Goal**: The daily report can embed four visual elements (ETF bar chart, crypto sparklines, Fear & Greed gauge, PEA colored table) as PNG base64 inline images, and any individual chart failure leaves the run unaffected
-**Depends on**: Phase 5 (v1.0 complete)
-**Requirements**: CHART-01, CHART-02, CHART-03, CHART-04, CHART-05
-**Success Criteria** (what must be TRUE):
-  1. Calling the ETF chart function with valid performance data returns a base64 PNG string showing 1-day and 1-week variation bars for each tracked ETF
-  2. Calling the crypto sparkline function with 7-day price history for BTC and ETH returns a base64 PNG string with two labeled sparkline curves
-  3. Calling the Fear & Greed gauge function with a value (0–100) returns a base64 PNG string showing a color-coded arc gauge
-  4. Calling the PEA table function with position data returns an HTML string with rows colored green (positive) or red (negative) based on performance
-  5. When any single chart function raises an exception, the caller receives None (or equivalent empty sentinel), logs the error, and the report generation pipeline continues without that chart — the email is still sent
-**Plans**: 4 plans in 3 waves
-Plans:
-**Wave 1**
-- [x] 06-01-PLAN.md — charts/ package bootstrap: Agg backend + requirements.txt
+</details>
 
-**Wave 2** *(blocked on Wave 1 completion)*
-- [x] 06-02-PLAN.md — ETF bar chart (CHART-01) + crypto sparklines (CHART-02)
-- [x] 06-03-PLAN.md — Fear & Greed gauge (CHART-03) + PEA HTML table (CHART-04)
+<details>
+<summary>✅ v1.1 Rapports Enrichis (Phases 6–8) — SHIPPED 2026-05-15</summary>
 
-**Wave 3** *(blocked on Wave 2 completion)*
-- [x] 06-04-PLAN.md — Unit tests for all 4 generators + CHART-05 fallback verification
+- [x] **Phase 6: Chart Generation** (4/4 plans) — matplotlib charts/ package: ETF bars, crypto sparklines, F&G gauge, PEA table — completed 2026-05-15
+- [x] **Phase 7: Template Redesign & Integration** (4/4 plans) — dark-mode Bloomberg HTML template, ReportOutput, all 3 reporters wired — completed 2026-05-15
+- [x] **Phase 8: Close Gaps** (3/3 plans) — data-contract fixes CHART-01/02/04, CHART-03 guard, sparkline endpoint, boundary tests, Phase 6 VERIFICATION.md — completed 2026-05-15
 
-**Cross-cutting constraints:**
-- Every chart function MUST return `Optional[str]` and catch all exceptions (CHART-05)
-- `matplotlib.use("Agg")` called once at package init — never per-function
-**UI hint**: yes
+*11 plans total | 292 tests | 70 files, +10,789 LOC | Archive: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)*
 
-### Phase 7: Template Redesign & Integration
-**Goal**: All three report types (daily, weekly, monthly) are delivered as visually polished HTML emails using a dark-mode financial template that renders correctly on both mobile and desktop, with charts from Phase 6 embedded where applicable
-**Depends on**: Phase 6
-**Requirements**: TMPL-01, TMPL-02, TMPL-03
-**Success Criteria** (what must be TRUE):
-  1. The HTML email template uses a dark background, orange and green accent colors, and a typographic style consistent with professional financial terminals (Bloomberg aesthetic)
-  2. Opening the email on a mobile viewport (< 600 px wide) displays a single-column layout with readable font sizes and no horizontal overflow
-  3. Opening the email on a desktop viewport displays the intended multi-column or sectioned layout with full chart visibility
-  4. A daily report email contains all four chart elements (ETF bars, crypto sparklines, Fear & Greed gauge, PEA colored table) or their text fallbacks, using the new template
-  5. Weekly and monthly report emails use the same base template with charts relevant to their scope; the three report types are visually consistent
-**Plans**: 4 plans in 3 waves
-Plans:
-**Wave 1**
-- [x] 07-01-PLAN.md — reporters/base.py (ReportOutput, html_section, fallback constants)
-- [x] 07-02-PLAN.md — delivery/email.py dark-mode template + _markdown_to_html + send_email html_body param
+</details>
 
-**Wave 2** *(blocked on Wave 1 completion)*
-- [x] 07-03-PLAN.md — reporters/daily.py + weekly.py + monthly.py → return ReportOutput + 2×2 chart panel
+### 📋 v1.2 (Planning Next)
 
-**Wave 3** *(blocked on Wave 2 completion)*
-- [x] 07-04-PLAN.md — reporters/dispatch.py + main.py wiring + integration smoke test
+Run `/gsd-new-milestone` to define scope, requirements, and roadmap for the next milestone.
 
-**Cross-cutting constraints:**
-- All reporters return ReportOutput(html_body, plain_text) — never bare str
-- Graceful degradation: outer try/except always returns ReportOutput, never raises
-**UI hint**: yes
-
-### Phase 8: Close Gaps (INSERTED)
-**Goal**: All CHART-01/02/04 data-contract mismatches are fixed (real charts render in production), CHART-03 unguarded AttributeError is patched, 7-day sparkline data is collected, and Phase 6 VERIFICATION.md is written
-**Depends on**: Phase 7
-**Requirements**: CHART-01, CHART-02, CHART-03, CHART-04, CHART-05
-**Success Criteria** (what must be TRUE):
-  1. Running a real daily report (no mocks) shows an ETF bar chart with 1-day and 1-week bars in the email
-  2. Running a real daily report shows crypto sparklines for BTC and ETH (7-day history collected via separate CoinGecko endpoint)
-  3. Running a real daily report shows the PEA colored table with per-position rows correctly colored
-  4. When collect_crypto stores fear_greed=None, the Fear & Greed gauge is silently skipped (None returned) and the rest of the report is unaffected
-  5. Phase 6 VERIFICATION.md exists and confirms all five CHART-* requirements satisfied
-**Plans**: 3 plans in 3 waves
-Plans:
-**Wave 1**
-- [x] 08-01-PLAN.md — collectors/etf.py (pct_change_1w) + collectors/crypto.py (sparkline history)
-
-**Wave 2** *(blocked on Wave 1 completion)*
-- [x] 08-02-PLAN.md — reporters/daily.py + weekly.py + monthly.py: ETF transform + PEA transform + CHART-03 fg_score fix
-
-**Wave 3** *(blocked on Wave 2 completion)*
-- [x] 08-03-PLAN.md — tests/test_chart_boundary.py boundary tests + 06-VERIFICATION.md
-
-**Cross-cutting constraints:**
-- All chart data transforms happen in _build_chart_panel (all 3 reporters), not in collectors or generators
-- CHART-05 graceful degradation: every chart path returns fallback HTML, never raises
-**UI hint**: no
+Candidates from tech debt / deferred backlog:
+- CR-02: Markdown table rendering in weekly/monthly HTML (pipe text → real HTML tables)
+- IN-01: Consolidate `_build_chart_panel` / `_sections_to_html` duplication across 3 reporters
+- SCHED-03: Resolve crontab offset divergence
+- DIST-01: Auto-publish tweets via Tweepy (deferred from v1.0)
+- MONIT-01: Minimal web dashboard for run status
+- DATA-ADV-01/02/03: Reddit/Twitter sentiment, Google Trends
 
 ## Progress
 
-**Execution Order:**
-Phases execute in numeric order: 6 → 7 → 8
-
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 6. Chart Generation | 4/4 | Complete | 2026-05-15 |
-| 7. Template Redesign & Integration | 4/4 | Complete | 2026-05-15 |
-| 8. Close Gaps (INSERTED) | 3/3 | Complete | 2026-05-15 |
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 1. Foundation | v1.0 | 3/3 | Complete | 2026-05-09 |
+| 2. Data Pipeline | v1.0 | 6/6 | Complete | 2026-05-11 |
+| 3. Report Generation | v1.0 | 4/4 | Complete | 2026-05-12 |
+| 4. Delivery & Side Outputs | v1.0 | 2/2 | Complete | 2026-05-12 |
+| 5. Scheduling & Resilience | v1.0 | 2/2 | Complete | 2026-05-13 |
+| 6. Chart Generation | v1.1 | 4/4 | Complete | 2026-05-15 |
+| 7. Template Redesign & Integration | v1.1 | 4/4 | Complete | 2026-05-15 |
+| 8. Close Gaps | v1.1 | 3/3 | Complete | 2026-05-15 |
+| 9. TBD | v1.2 | 0/? | Not started | - |

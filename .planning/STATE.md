@@ -1,11 +1,11 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: Rapports Enrichis
-status: milestone_complete
-stopped_at: Milestone v1.1 complete — all 3 phases done, 11/11 plans
-last_updated: "2026-05-15T15:30:00.000Z"
-last_activity: 2026-05-15 — Milestone v1.1 Rapports Enrichis complete (Phase 6 + 7 + 8)
+milestone: v1.2
+milestone_name: TBD
+status: planning_next
+stopped_at: v1.1 archived — ready for /gsd-new-milestone
+last_updated: "2026-05-15T20:00:00.000Z"
+last_activity: 2026-05-15 — Milestone v1.1 archived, git tag v1.1 pending
 progress:
   total_phases: 3
   completed_phases: 3
@@ -18,20 +18,16 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-05-13)
+See: .planning/PROJECT.md (updated 2026-05-15)
 
 **Core value:** L'utilisateur reçoit chaque matin une analyse financière actionnable et sourcée couvrant ETFs, crypto et PEA — sans aucune action manuelle — directement dans sa boîte email.
-**Current focus:** Milestone v1.1 Rapports Enrichis — COMPLETE
+**Current focus:** Planning milestone v1.2 — run /gsd-new-milestone
 
 ## Current Position
 
-Phase: Milestone v1.1 COMPLETE
-Plans: 06 ✓ | 07 ✓ | 08 ✓ (11/11)
-Status: All phases verified — ready for /gsd-complete-milestone or next milestone planning
-Last activity: 2026-05-15 — 08-02 complete: reporter transform layer (CHART-01/03/04)
-
-Progress: 1/3 phases complete | 8/11 plans complete (73%)
-[██████████████░░░░░░] 73%
+Phase: v1.1 archived — planning v1.2
+Status: Run /gsd-new-milestone to define v1.2 scope, requirements, and roadmap
+Last activity: 2026-05-15 — v1.1 Rapports Enrichis archived (Phases 6–8, 11 plans, 292 tests)
 
 ## Performance Metrics
 
@@ -111,6 +107,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-15T12:00:00.000Z
-Stopped at: Completed 08-02-PLAN.md — reporter transform layer (CHART-01/03/04)
-Resume file: .planning/phases/08-close-gaps/08-03-PLAN.md
+Last session: 2026-05-15T20:00:00.000Z
+Stopped at: Milestone v1.1 archived — all phase dirs moved to milestones/v1.1-phases/
+Resume: /gsd-new-milestone to start v1.2
