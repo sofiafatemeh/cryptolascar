@@ -25,6 +25,13 @@ import smtplib
 import pytest
 from unittest.mock import patch, MagicMock, call
 
+from reporters.base import ReportOutput
+
+
+def _ro(plain: str = "Report text", html: str = "<p>Report html</p>") -> ReportOutput:
+    """Shorthand for creating a ReportOutput in test mocks."""
+    return ReportOutput(html_body=html, plain_text=plain)
+
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -80,7 +87,7 @@ def partial_data():
 def _base_patches(mock_config, data, *, select_return=None, today=None):
     """Retourne un dict de patches à utiliser avec unittest.mock.patch."""
     if select_return is None:
-        select_return = {"daily": "Daily report text"}
+        select_return = {"daily": _ro("Daily report text")}
     if today is None:
         today = datetime.date(2026, 5, 11)  # lundi, pas dernier jour du mois
     return {
@@ -112,18 +119,13 @@ def test_mode_daily_success(mock_config, daily_data):
     from main import main
 
     today = datetime.date(2026, 5, 11)
-    patches = _base_patches(
-        mock_config,
-        daily_data,
-        select_return={"daily": "Daily report text"},
-        today=today,
-    )
+    daily_report = _ro("Daily report text")
 
     with patch("main.get_config", return_value=mock_config), \
          patch("main.setup_logging"), \
          patch("main.init_db"), \
          patch("main.collect_all", return_value=daily_data) as mock_collect, \
-         patch("main.select_reports", return_value={"daily": "Daily report text"}), \
+         patch("main.select_reports", return_value={"daily": daily_report}), \
          patch("main.send_email") as mock_send, \
          patch("main.write_tweet") as mock_tweet, \
          patch("main.archive_report") as mock_archive, \
@@ -137,9 +139,12 @@ def test_mode_daily_success(mock_config, daily_data):
         result = main(["--mode", "daily"])
 
     assert result == 0
-    mock_send.assert_called_once_with("daily", today.isoformat(), "Daily report text", mock_config, month="", year="")
-    mock_tweet.assert_called_once_with("daily", today.isoformat(), "Daily report text", mock_config)
-    mock_archive.assert_called_once_with("daily", today.isoformat(), "Daily report text")
+    mock_send.assert_called_once_with(
+        "daily", today.isoformat(), daily_report.plain_text, mock_config,
+        month="", year="", html_body=daily_report.html_body,
+    )
+    mock_tweet.assert_called_once_with("daily", today.isoformat(), daily_report.plain_text, mock_config)
+    mock_archive.assert_called_once_with("daily", today.isoformat(), daily_report.plain_text)
     # D-11 : exactement un log_run avec status success ou partial
     mock_log_run.assert_called_once()
     log_args = mock_log_run.call_args[0]
@@ -160,7 +165,7 @@ def test_mode_weekly_success(mock_config, daily_data):
          patch("main.setup_logging"), \
          patch("main.init_db"), \
          patch("main.collect_all", return_value=daily_data), \
-         patch("main.select_reports", return_value={"weekly": "Weekly report text"}), \
+         patch("main.select_reports", return_value={"weekly": _ro("Weekly report text")}), \
          patch("main.send_email") as mock_send, \
          patch("main.write_tweet") as mock_tweet, \
          patch("main.archive_report") as mock_archive, \
@@ -195,7 +200,7 @@ def test_mode_monthly_last_day(mock_config, daily_data):
          patch("main.setup_logging"), \
          patch("main.init_db"), \
          patch("main.collect_all", return_value=daily_data), \
-         patch("main.select_reports", return_value={"monthly": "Monthly report text"}), \
+         patch("main.select_reports", return_value={"monthly": _ro("Monthly report text")}), \
          patch("main.send_email") as mock_send, \
          patch("main.write_tweet") as mock_tweet, \
          patch("main.archive_report") as mock_archive, \
@@ -267,7 +272,7 @@ def test_mode_daily_send_email_failure(mock_config, daily_data):
          patch("main.setup_logging"), \
          patch("main.init_db"), \
          patch("main.collect_all", return_value=daily_data), \
-         patch("main.select_reports", return_value={"daily": "Daily report text"}), \
+         patch("main.select_reports", return_value={"daily": _ro("Daily report text")}), \
          patch("main.send_email", side_effect=smtplib.SMTPException("Connection refused")), \
          patch("main.write_tweet"), \
          patch("main.archive_report"), \
@@ -305,7 +310,7 @@ def test_mode_daily_archive_failure(mock_config, daily_data):
          patch("main.setup_logging"), \
          patch("main.init_db"), \
          patch("main.collect_all", return_value=daily_data), \
-         patch("main.select_reports", return_value={"daily": "Daily report text"}), \
+         patch("main.select_reports", return_value={"daily": _ro("Daily report text")}), \
          patch("main.send_email"), \
          patch("main.write_tweet"), \
          patch("main.archive_report", side_effect=OSError("Disk full")), \
@@ -335,8 +340,8 @@ def test_rept04_dual_report(mock_config, daily_data):
 
     today = datetime.date(2026, 5, 31)  # dernier dimanche du mois (par hypothèse)
     dual_reports = {
-        "monthly": "Monthly report text",
-        "weekly": "Weekly report text",
+        "monthly": _ro("Monthly report text"),
+        "weekly": _ro("Weekly report text"),
     }
     with patch("main.get_config", return_value=mock_config), \
          patch("main.setup_logging"), \
@@ -380,7 +385,7 @@ def test_partial_collect(mock_config, partial_data):
          patch("main.setup_logging"), \
          patch("main.init_db"), \
          patch("main.collect_all", return_value=partial_data), \
-         patch("main.select_reports", return_value={"daily": "Daily report text"}), \
+         patch("main.select_reports", return_value={"daily": _ro("Daily report text")}), \
          patch("main.send_email") as mock_send, \
          patch("main.write_tweet"), \
          patch("main.archive_report"), \
